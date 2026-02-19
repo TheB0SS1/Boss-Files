@@ -1,1087 +1,435 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOSS FILES - ملفات المحاضرات</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boss Files — Elite Academic System</title>
     <style>
         :root {
-            --oral-blue: #3498db;
-            --pharma-red: #e74c3c;
-            --psycho-purple: #9b59b6;
-            --tech-green: #2ecc71;
-            --operative-teal: #1abc9c;
-            --removable-orange: #e67e22;
-            --dark-bg: #0d1117;
-            --card-bg: #161b22;
-            --light-text: #f0f6fc;
-            --border-color: #30363d;
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            --transition: all 0.3s ease;
+            --bg-deep: #020617;
+            --subject-accent: #3b82f6;
+            --subject-accent-low: rgba(59, 130, 246, 0.1);
+            --subject-accent-rgb: 59, 130, 246;
+            --slate-100: #f8fafc;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
 
         body {
-            background-color: var(--dark-bg);
-            color: var(--light-text);
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
+            background-color: var(--bg-deep);
+            color: var(--slate-100);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            line-height: 1.5;
+            transition: background-color 0.8s ease;
         }
 
-        .site-header {
-            text-align: center;
-            padding: 40px 20px;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, var(--card-bg) 0%, #1c2128 100%);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
 
-        .site-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                var(--oral-blue) 0%, 
-                var(--pharma-red) 20%, 
-                var(--psycho-purple) 40%, 
-                var(--tech-green) 60%, 
-                var(--operative-teal) 80%, 
-                var(--removable-orange) 100%);
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .logo-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--oral-blue), var(--psycho-purple));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: white;
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
-            border: 3px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .title-section h1 {
-            font-size: 3rem;
-            background: linear-gradient(90deg, #fff, #b0b0b0);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        .title-section .subtitle {
-            font-size: 1.2rem;
-            color: #8b949e;
-            margin-bottom: 15px;
-        }
-
-        .title-section .description {
-            color: #c9d1d9;
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1rem;
-            line-height: 1.8;
-        }
-
-        .subject-navigation {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 1200px) {
-            .subject-navigation {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .subject-navigation {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .subject-navigation {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .nav-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px 20px;
-            text-align: center;
-            text-decoration: none;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-        }
-
-        .nav-card.oral::before { background: var(--oral-blue); }
-        .nav-card.pharma::before { background: var(--pharma-red); }
-        .nav-card.psycho::before { background: var(--psycho-purple); }
-        .nav-card.tech-fixed::before { background: var(--tech-green); }
-        .nav-card.operative::before { background: var(--operative-teal); }
-        .nav-card.removable::before { background: var(--removable-orange); }
-
-        .nav-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .nav-card.oral .nav-icon { color: var(--oral-blue); }
-        .nav-card.pharma .nav-icon { color: var(--pharma-red); }
-        .nav-card.psycho .nav-icon { color: var(--psycho-purple); }
-        .nav-card.tech-fixed .nav-icon { color: var(--tech-green); }
-        .nav-card.operative .nav-icon { color: var(--operative-teal); }
-        .nav-card.removable .nav-icon { color: var(--removable-orange); }
-
-        .nav-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: var(--light-text);
-        }
-
-        .nav-card p {
-            color: #8b949e;
-            font-size: 0.9rem;
-        }
-
-        .subject-content {
-            display: none;
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .subject-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .subject-header .back-btn {
-            background: none;
-            border: none;
-            color: #8b949e;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .subject-header .back-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--light-text);
-        }
-
-        .subject-title {
-            font-size: 2rem;
-            color: var(--light-text);
-            flex-grow: 1;
-        }
-
-        .lectures-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 1200px) {
-            .lectures-container {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        @media (max-width: 992px) {
-            .lectures-container {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .lectures-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .lectures-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .lecture-card {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .lecture-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .lecture-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: var(--light-text);
-        }
-
-        .lecture-title {
-            font-size: 0.9rem;
-            color: #8b949e;
-            margin-bottom: 10px;
-        }
-
-        .lecture-filename {
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            color: #58a6ff;
-            background: rgba(88, 166, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            direction: ltr;
-            text-align: left;
-            word-break: break-all;
-        }
-
-        .additional-files {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .additional-files h3 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--light-text);
-        }
-
-        .additional-files-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        @media (max-width: 768px) {
-            .additional-files-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .additional-files-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .additional-file {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-        }
-
-        .additional-file:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .additional-file-icon {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: #58a6ff;
-        }
-
-        .additional-file h4 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: var(--light-text);
-        }
-
-        .additional-file p {
-            font-size: 0.9rem;
-            color: #8b949e;
-        }
-
-        .action-modal {
-            display: none;
+        /* Navigation - Stealth Dark */
+        nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 1000;
-            justify-content: center;
+            top: 0; left: 0; right: 0;
+            height: 5rem;
+            display: flex;
             align-items: center;
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+        }
+
+        .nav-content { display: flex; justify-content: flex-end; align-items: center; width: 100%; }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 0.7rem 1.25rem;
+            color: white;
+            font-size: 0.85rem;
+            width: 18rem;
+            transition: all 0.4s;
+        }
+        .search-input:focus { outline: none; border-color: var(--subject-accent); width: 22rem; background: rgba(255,255,255,0.08); box-shadow: 0 0 30px rgba(var(--subject-accent-rgb), 0.2); }
+
+        /* Elite 3D Logo Header */
+        .hero { text-align: center; padding: 12rem 0 6rem; position: relative; }
+        
+        .logo-3d {
+            font-size: clamp(3rem, 12vw, 7rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            display: inline-block;
+            color: #fff;
+            position: relative;
+            animation: float-3d 6s ease-in-out infinite;
+            text-shadow: 
+                0 1px 0 #333, 
+                0 2px 0 #222, 
+                0 3px 0 #111, 
+                0 4px 0 #000,
+                0 10px 40px rgba(var(--subject-accent-rgb), 0.4);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes float-3d {
+            0%, 100% { transform: translateY(0) rotateX(0deg) scale(1); }
+            50% { transform: translateY(-20px) rotateX(15deg) scale(1.02); }
+        }
+
+        /* Subject Grid - Cosmic Cards */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            gap: 2.5rem; 
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 4rem 2rem;
+            height: 16rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        .card:hover { 
+            transform: translateY(-15px) scale(1.02);
+            border-color: rgba(var(--subject-accent-rgb), 0.4);
+            background: rgba(255,255,255,0.06);
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6);
+        }
+        
+        .card h3 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .card span { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em; color: var(--slate-400); }
+
+        .energy-aura { 
+            position: absolute; bottom: 0; left: 0; right: 0; height: 100%; 
+            background: radial-gradient(circle at bottom, var(--aura-color), transparent 70%);
+            opacity: 0.15; transition: opacity 0.5s; pointer-events: none;
+        }
+        .card:hover .energy-aura { opacity: 0.4; }
+
+        /* Subject Zone - Void Experience */
+        .zone-header { padding: 8rem 0 4rem; animation: zone-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes zone-enter { from { opacity: 0; transform: translateY(50px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .breadcrumb {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 2rem; color: var(--slate-400);
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em;
+        }
+        .breadcrumb span { cursor: pointer; transition: all 0.3s; }
+        .breadcrumb span:hover { color: #fff; text-shadow: 0 0 10px #fff; }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .cat-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(15px);
+        }
+        .cat-card:hover {
+            transform: translateY(-12px);
+            background: rgba(255,255,255,0.06);
+            border-color: var(--subject-accent);
+            box-shadow: 0 30px 60px -10px rgba(var(--subject-accent-rgb), 0.25);
+        }
+        .cat-icon {
+            width: 4.5rem; height: 4.5rem;
+            background: rgba(var(--subject-accent-rgb), 0.1);
+            color: var(--subject-accent);
+            border-radius: 22px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            transition: all 0.4s;
+        }
+        .cat-card:hover .cat-icon { background: var(--subject-accent); color: #fff; transform: scale(1.1) rotate(-5deg); box-shadow: 0 0 30px var(--subject-accent); }
+        .cat-card h4 { font-size: 1.6rem; font-weight: 800; color: #fff; }
+        .cat-card p { font-size: 0.85rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* File List - High Tech Rows */
+        .file-list { display: grid; gap: 1.25rem; margin-top: 3rem; }
+        .file-row {
+            display: flex; align-items: center; gap: 1.5rem;
+            padding: 1.75rem 2.5rem; background: var(--glass);
+            border: 1px solid var(--glass-border); border-radius: 28px;
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             backdrop-filter: blur(10px);
         }
-
-        .modal-content {
-            background: var(--card-bg);
-            width: 90%;
-            max-width: 500px;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            animation: modalAppear 0.3s ease;
+        .file-row:hover { transform: translateX(15px); background: rgba(255,255,255,0.08); border-color: var(--subject-accent); }
+        
+        .file-icon-box {
+            width: 3.5rem; height: 3.5rem;
+            background: rgba(var(--subject-accent-rgb), 0.15);
+            color: var(--subject-accent);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
         }
+        .file-row:hover .file-icon-box { background: var(--subject-accent); color: #fff; }
 
-        @keyframes modalAppear {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        .file-name { font-weight: 800; color: #fff; font-size: 1.3rem; }
+        .file-meta { font-size: 0.75rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        .modal-header {
-            padding: 25px;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(0, 0, 0, 0.2);
-        }
+        /* Minimal Footer */
+        footer { padding: 6rem 0; text-align: center; margin-top: 4rem; opacity: 0.5; }
+        footer p { font-size: 0.75rem; color: var(--slate-400); font-weight: 800; letter-spacing: 0.4em; }
 
-        .modal-header h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--light-text);
-        }
-
-        .modal-header p {
-            color: #8b949e;
-        }
-
-        .modal-body {
-            padding: 30px;
-        }
-
-        .action-buttons {
-            display: grid;
-            gap: 15px;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            padding: 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            color: white;
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #238636, #2ea043);
-        }
-
-        .download-btn:hover {
-            background: linear-gradient(135deg, #2ea043, #3fb950);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(46, 160, 67, 0.3);
-        }
-
-        .share-btn {
-            background: linear-gradient(135deg, #1f6feb, #388bfd);
-        }
-
-        .share-btn:hover {
-            background: linear-gradient(135deg, #388bfd, #58a6ff);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(56, 139, 253, 0.3);
-        }
-
-        .close-btn {
-            background: rgba(255, 255, 255, 0.05);
-            color: #8b949e;
-            margin-top: 10px;
-        }
-
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light-text);
-        }
-
-        .share-options {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border-color);
-            display: none;
-        }
-
-        .share-options.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .share-options h4 {
-            color: var(--light-text);
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .link-box {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .link-box input {
-            flex-grow: 1;
-            background: transparent;
-            border: none;
-            color: var(--light-text);
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            padding: 8px 0;
-        }
-
-        .copy-btn {
-            background: #9b59b6;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-        }
-
-        .copy-btn:hover {
-            background: #8e44ad;
-        }
-
-        .site-footer {
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: 60px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 2.5rem;
-            color: var(--oral-blue);
-            margin-bottom: 20px;
-        }
-
-        .footer-text {
-            color: #8b949e;
-            margin-bottom: 15px;
-            line-height: 1.8;
-        }
-
-        .boss-mention {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(52, 152, 219, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(52, 152, 219, 0.2);
-        }
-
-        .boss-mention p {
-            color: var(--light-text);
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: linear-gradient(135deg, #238636, #2ea043);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            z-index: 1001;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            opacity: 0;
-            transition: all 0.5s ease;
-        }
-
-        .notification.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--card-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #484f58;
-        }
+        #cosmic-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "lucide-react": "https://esm.sh/lucide-react@^0.575.0",
+    "react/": "https://esm.sh/react@^19.2.4/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <!-- الهيدر -->
-    <header class="site-header">
-        <div class="logo-section">
-            <div class="logo-icon">
-                <i class="fas fa-crown"></i>
-            </div>
-            <div class="title-section">
-                <h1>BOSS FILES</h1>
+    <canvas id="cosmic-bg"></canvas>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="ACCESS DATA CORE..." oninput="app.handleSearch(this.value)">
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- التنقل بين المواد -->
-    <div class="subject-navigation">
-        <div class="nav-card oral" data-subject="oral">
-            <div class="nav-icon">
-                <i class="fas fa-tooth"></i>
-            </div>
-            <h3>Oral Pathology</h3>
-            <p></p>
-        </div>
+    <main id="app-root" class="container"></main>
 
-        <div class="nav-card pharma" data-subject="pharma">
-            <div class="nav-icon">
-                <i class="fas fa-pills"></i>
-            </div>
-            <h3>Pharmacology</h3>
-            <p></p>
-        </div>
-
-        <div class="nav-card psycho" data-subject="psycho">
-            <div class="nav-icon">
-                <i class="fas fa-brain"></i>
-            </div>
-            <h3>psychology</h3>
-            <p></p>
-        </div>
-
-        <div class="nav-card tech-fixed" data-subject="tech-fixed">
-            <div class="nav-icon">
-                <i class="fas fa-tools"></i>
-            </div>
-            <h3>Tech Fixed 2</h3>
-            <p></p>
-        </div>
-
-        <div class="nav-card operative" data-subject="operative">
-            <div class="nav-icon">
-                <i class="fas fa-cogs"></i>
-            </div>
-            <h3>Tech-Operative</h3>
-           <p></p>
-        </div>
-
-        <div class="nav-card removable" data-subject="removable">
-            <div class="nav-icon">
-                <i class="fas fa-teeth-open"></i>
-            </div>
-            <h3>Tech-Removable</h3>
-            <p></p>
-        </div>
-    </div>
-
-    <!-- محتوى المواد -->
-    <div id="subject-content" class="subject-content" style="display: none;">
-        <!-- سيتم تعبئته بالجافاسكريبت -->
-    </div>
-
-    <!-- نافذة الإجراءات -->
-    <div class="action-modal" id="actionModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">اختيار الإجراء</h3>
-                <p id="modalSubtitle">اختر الإجراء الذي تريد تنفيذه للمحاضرة</p>
-            </div>
-            <div class="modal-body">
-                <div class="action-buttons">
-                    <a href="#" class="action-btn download-btn" id="downloadBtn" download>
-                        <i class="fas fa-download"></i>
-                        <span>تنزيل الملف</span>
-                    </a>
-                    
-                    <button class="action-btn share-btn" id="shareBtn">
-                        <i class="fas fa-share-alt"></i>
-                        <span>مشاركة المحاضرة</span>
-                    </button>
-                    
-                    <button class="action-btn close-btn" id="closeModalBtn">
-                        <i class="fas fa-times"></i>
-                        <span>إلغاء</span>
-                    </button>
-                </div>
-                
-                <div class="share-options" id="shareOptions">
-                    <h4>مشاركة المحاضرة</h4>
-                    <div class="link-box">
-                        <input type="text" id="shareLink" readonly value="">
-                        <button class="copy-btn" id="copyLinkBtn">
-                            <i class="fas fa-copy"></i> نسخ الرابط
-                        </button>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 15px; color: #8b949e; font-size: 0.9rem;">
-                        <i class="fas fa-info-circle"></i> يمكنك نسخ الرابط ومشاركته مع زملائك
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- إشعار -->
-    <div class="notification" id="notification">
-        <i class="fas fa-check-circle"></i>
-        <span id="notificationText">تم نسخ الرابط بنجاح!</span>
-    </div>
-
-    <!-- الفوتر -->
-    <footer class="site-footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <i class="fas fa-crown"></i>
-            </div>
-            <p class="footer-text">BOSS FILES </p>
-            <p class="footer-text">جميع الحقوق محفوظة © 2026 </p>
-            <p class="footer-text"></p>
-            
-            <div class="boss-mention">
-                <p>
-                    <i class="fas fa-heart" style="color: #e74c3c;"></i>
-                    نسأل الله التوفيق والسداد لصاحب هذا العمل "BOSS" 
-                   
-                    <i class="fas fa-heart" style="color: #e74c3c;"></i>
-                </p>
-            </div>
-        </div>
+    <footer class="container">
+        <p>THE BOSS • ELITE ACADEMIC REPOSITORY v4.0</p>
     </footer>
 
     <script>
-        // بيانات المواد مع التسميات الجديدة
-        const subjects = {
-            'oral': {
-                name: 'Oral Pathology',
-                color: '#3498db',
-                icon: 'fas fa-tooth',
-                lectures: 12,
-                filenamePattern: 'num Lec Oral Pathology.pdf',
-                additionalFiles: [
-                    { name: 'اختياري 1', filename: 'اختياري 1.pdf', icon: 'fas fa-file-pdf' },
-                    { name: 'اختياري 2', filename: 'اختياري 2.pdf', icon: 'fas fa-file-alt' },
-                    { name: 'اختياري 3', filename: 'اختياري 3.pdf', icon: 'fas fa-file-medical' }
-                ]
-            },
-            'pharma': {
-                name: 'Pharmacology',
-                color: '#e74c3c',
-                icon: 'fas fa-pills',
-                lectures: 12,
-                filenamePattern: 'num Lec Pharmacology.pdf',
-                additionalFiles: [
-                    { name: 'اختياري 1', filename: 'اختياري 1.pdf', icon: 'fas fa-file-pdf' },
-                    { name: 'اختياري 2', filename: 'اختياري 2.pdf', icon: 'fas fa-file-alt' },
-                    { name: 'اختياري 3', filename: 'اختياري 3.pdf', icon: 'fas fa-file-medical' }
-                ]
-            },
-            'psycho': {
-                name: 'psychology',
-                color: '#9b59b6',
-                icon: 'fas fa-brain',
-                lectures: 12,
-                filenamePattern: 'num Lec psychology.pdf',
-                additionalFiles: [
-                    { name: 'اختياري 1', filename: 'اختياري 1.pdf', icon: 'fas fa-file-pdf' },
-                    { name: 'اختياري 2', filename: 'اختياري 2.pdf', icon: 'fas fa-file-alt' },
-                    { name: 'اختياري 3', filename: 'اختياري 3.pdf', icon: 'fas fa-file-medical' }
-                ]
-            },
-            'tech-fixed': {
-                name: 'Tech Fixed 2',
-                color: '#2ecc71',
-                icon: 'fas fa-tools',
-                lectures: 12,
-                filenamePattern: 'num Lec Tech Fixed 2.pdf',
-                additionalFiles: [
-                    { name: 'اختياري 1', filename: 'اختياري 1.pdf', icon: 'fas fa-file-pdf' },
-                    { name: 'اختياري 2', filename: 'اختياري 2.pdf', icon: 'fas fa-file-alt' },
-                    { name: 'اختياري 3', filename: 'اختياري 3.pdf', icon: 'fas fa-file-medical' }
-                ]
-            },
-            'operative': {
-                name: 'Tech-Operative',
-                color: '#1abc9c',
-                icon: 'fas fa-cogs',
-                lectures: 12,
-                filenamePattern: 'num Lec Tech-Operative.pdf',
-                additionalFiles: [
-                    { name: 'اختياري 1', filename: 'اختياري 1.pdf', icon: 'fas fa-file-pdf' },
-                    { name: 'اختياري 2', filename: 'اختياري 2.pdf', icon: 'fas fa-file-alt' },
-                    { name: 'اختياري 3', filename: 'اختياري 3.pdf', icon: 'fas fa-file-medical' }
-                ]
-            },
-            'removable': {
-                name: 'Tech-Removable',
-                color: '#e67e22',
-                icon: 'fas fa-teeth-open',
-                lectures: 12,
-                filenamePattern: 'num Lec Tech-Removable.pdf',
-                additionalFiles: [
-                    { name: 'اختياري 1', filename: 'اختياري 1.pdf', icon: 'fas fa-file-pdf' },
-                    { name: 'اختياري 2', filename: 'اختياري 2.pdf', icon: 'fas fa-file-alt' },
-                    { name: 'اختياري 3', filename: 'اختياري 3.pdf', icon: 'fas fa-file-medical' }
-                ]
-            }
+        const PSYCH_DRIVE_RECORDS = "https://drive.google.com/drive/folders/1S-HWc1tXMPMdZ27NETHg_sGiFyu2hljx?usp=sharing";
+        const GENERAL_TELEGRAM = "https://t.me/theboss230";
+
+        const SUBJECTS = [
+            { id: 'oral-path', name: 'Oral Pathology', color: '#3b82f6', colorRGB: '59, 130, 246', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'pharma', name: 'Pharmacology', color: '#ef4444', colorRGB: '239, 68, 68', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'psych', name: 'Psychology', color: '#8b5cf6', colorRGB: '139, 92, 246', filesCount: { Lecture: 12, Section: 0, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'tech-fixed-2', name: 'Tech Fixed 2', color: '#10b981', colorRGB: '16, 185, 129', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'tech-op', name: 'Tech-Operative', color: '#14b8a6', colorRGB: '20, 184, 166', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'tech-rem', name: 'Tech-Removable', color: '#f59e0b', colorRGB: '245, 158, 11', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } }
+        ];
+
+        const generateFiles = (subject) => {
+            const files = [];
+            const types = ['Lecture', 'Section', 'Question', 'Extra', 'Recording'];
+            const abbr = { Lecture: 'Lec', Section: 'Sec', Question: 'Q', Extra: 'EX', Recording: 'Rec' };
+
+            types.forEach(type => {
+                const count = subject.filesCount[type] || 0;
+                for (let i = 1; i <= count; i++) {
+                    let path = '#';
+                    let displayName = `${subject.name} ${type} ${i}`;
+                    if (type === 'Recording') {
+                        path = (subject.id === 'psych') ? PSYCH_DRIVE_RECORDS : GENERAL_TELEGRAM;
+                        displayName = (subject.id === 'psych') ? "Cloud Sync Archive" : "Telegram Core Link";
+                    } else {
+                        path = `${i} ${abbr[type]} ${subject.name}.pdf`;
+                    }
+                    files.push({ id: `${subject.id}-${type}-${i}`, number: i, type, name: displayName, fileName: path, isExternal: type === 'Recording' });
+                }
+            });
+            return files;
         };
 
-        // دالة لإنشاء اسم الملف
-        function getFilename(subjectId, lectureNum) {
-            const subject = subjects[subjectId];
-            return subject.filenamePattern.replace('num', lectureNum);
-        }
+        const SUBJECT_DATA = SUBJECTS.map(s => ({ ...s, files: generateFiles(s) }));
 
-        // عناصر DOM
-        const subjectContent = document.getElementById('subject-content');
-        const actionModal = document.getElementById('actionModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const shareBtn = document.getElementById('shareBtn');
-        const shareOptions = document.getElementById('shareOptions');
-        const copyLinkBtn = document.getElementById('copyLinkBtn');
-        const shareLinkInput = document.getElementById('shareLink');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const notification = document.getElementById('notification');
-        const notificationText = document.getElementById('notificationText');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalSubtitle = document.getElementById('modalSubtitle');
+        const app = {
+            view: 'home',
+            selectedSubject: null,
+            selectedCategory: null,
 
-        // بيانات المحاضرة الحالية
-        let currentFile = '';
-        let currentSubject = '';
-        let currentLecture = '';
+            init() {
+                this.render();
+                this.initCanvas();
+            },
 
-        // تهيئة التنقل بين المواد
-        document.querySelectorAll('.nav-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const subjectId = this.getAttribute('data-subject');
-                showSubject(subjectId);
-            });
-        });
+            updateTheme(color, rgb) {
+                const logo = document.querySelector('.logo-3d');
+                if (color && logo) {
+                    logo.style.textShadow = `0 1px 0 #333, 0 2px 0 #111, 0 10px 50px rgba(${rgb}, 0.5)`;
+                    document.documentElement.style.setProperty('--subject-accent', color);
+                    document.documentElement.style.setProperty('--subject-accent-rgb', rgb);
+                    document.body.style.backgroundColor = `rgba(${rgb}, 0.04)`;
+                } else if (logo) {
+                    logo.style.textShadow = `0 1px 0 #333, 0 2px 0 #222, 0 3px 0 #111, 0 4px 0 #000, 0 10px 40px rgba(59, 130, 246, 0.4)`;
+                    document.documentElement.style.setProperty('--subject-accent', '#3b82f6');
+                    document.documentElement.style.setProperty('--subject-accent-rgb', '59, 130, 246');
+                    document.body.style.backgroundColor = '#020617';
+                }
+            },
 
-        // دالة عرض المادة
-        function showSubject(subjectId) {
-            const subject = subjects[subjectId];
-            if (!subject) return;
+            navigate(view, subId = null, cat = null) {
+                this.view = view;
+                this.selectedSubject = subId ? SUBJECT_DATA.find(s => s.id === subId) : null;
+                this.selectedCategory = cat;
+                
+                // CRITICAL: Scroll to top on every navigation
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+                
+                this.render();
+                
+                // Re-apply scroll to top after render just in case
+                setTimeout(() => {
+                    window.scrollTo({top: 0, behavior: 'auto'});
+                }, 10);
 
-            // إخفاء التنقل وإظهار المحتوى
-            document.querySelector('.subject-navigation').style.display = 'none';
-            
-            // إنشاء محتوى المادة
-            subjectContent.innerHTML = `
-                <div class="subject-header">
-                    <button class="back-btn" onclick="goBack()">
-                        <i class="fas fa-arrow-right"></i>
-                        الرجوع للقائمة
-                    </button>
-                    <h1 class="subject-title" style="color: ${subject.color}">
-                        <i class="${subject.icon}"></i>
-                        ${subject.name}
-                    </h1>
-                </div>
+                setTimeout(() => this.updateTheme(this.selectedSubject?.color, this.selectedSubject?.colorRGB), 50);
+            },
 
-                <div class="lectures-container" id="lecturesContainer">
-                    ${Array.from({length: subject.lectures}, (_, i) => i + 1)
-                        .map(num => {
-                            const filename = getFilename(subjectId, num);
-                            return `
-                                <div class="lecture-card" onclick="openLecture('${subjectId}', ${num})">
-                                    <div class="lecture-number">${num}</div>
-                                    <div class="lecture-title">محاضرة ${num}</div>
-                                    <div class="lecture-filename">${filename}</div>
-                                </div>
-                            `;
-                        }).join('')}
-                </div>
+            render() {
+                const root = document.getElementById('app-root');
+                if (this.view === 'home') root.innerHTML = this.renderHome();
+                else if (this.view === 'subject') root.innerHTML = this.renderSubjectZone();
+                else if (this.view === 'category') root.innerHTML = this.renderCategoryFiles();
+                if (this.view === 'home') this.attachCardEffects();
+            },
 
-                <div class="additional-files">
-                    <h3><i class="fas fa-folder-plus"></i> ملفات إضافية</h3>
-                    <div class="additional-files-container">
-                        ${subject.additionalFiles.map(file => `
-                            <div class="additional-file" onclick="openAdditionalFile('${subjectId}', '${file.filename}')">
-                                <div class="additional-file-icon">
-                                    <i class="${file.icon}"></i>
-                                </div>
-                                <h4>${file.name}</h4>
-                                <p>${file.filename}</p>
+            renderHome() {
+                return `
+                    <div class="hero">
+                        <div class="logo-3d">Boss Files</div>
+                    </div>
+                    <div class="grid">
+                        ${SUBJECT_DATA.map(s => `
+                            <div class="card" onclick="app.navigate('subject', '${s.id}')">
+                                <h3>${s.name}</h3>
+                                <span>${s.files.length} ASSETS</span>
+                                <div class="energy-aura" style="--aura-color: ${s.color};"></div>
                             </div>
                         `).join('')}
                     </div>
-                </div>
-            `;
+                `;
+            },
 
-            subjectContent.style.display = 'block';
-            subjectContent.style.borderLeft = `4px solid ${subject.color}`;
-            
-            // التمرير للأعلى
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+            renderSubjectZone() {
+                const s = this.selectedSubject;
+                const categories = Object.keys(s.filesCount).filter(cat => s.filesCount[cat] > 0);
+                
+                return `
+                    <div class="zone-header">
+                        <div class="breadcrumb">
+                            <span onclick="app.navigate('home')">SYSTEM CORE</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin:0 5px"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <span style="color:var(--subject-accent)">${s.name}</span>
+                        </div>
+                        <h2 style="font-size: 5rem; font-weight: 900; letter-spacing:-0.05em; line-height:0.9; color:#fff">${s.name}</h2>
+                        <div class="category-grid">
+                            ${categories.map(cat => `
+                                <div class="cat-card" onclick="app.navigate('category', '${s.id}', '${cat}')">
+                                    <div class="cat-icon">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            ${this.getCatIcon(cat)}
+                                        </svg>
+                                    </div>
+                                    <h4>${cat}s</h4>
+                                    <p>${s.filesCount[cat]} verified</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            },
 
-        // دالة الرجوع للقائمة
-        function goBack() {
-            subjectContent.style.display = 'none';
-            document.querySelector('.subject-navigation').style.display = 'grid';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+            renderCategoryFiles() {
+                const s = this.selectedSubject;
+                const cat = this.selectedCategory;
+                const files = s.files.filter(f => f.type === cat);
 
-        // دالة فتح المحاضرة
-        function openLecture(subjectId, lectureNumber) {
-            const subject = subjects[subjectId];
-            const filename = getFilename(subjectId, lectureNumber);
-            
-            currentSubject = subject.name;
-            currentLecture = lectureNumber;
-            currentFile = filename;
-            
-            // تحديث عنوان النافذة
-            modalTitle.textContent = `محاضرة ${lectureNumber} - ${subject.name}`;
-            modalSubtitle.textContent = `اختر الإجراء الذي تريد تنفيذه للمحاضرة ${lectureNumber}`;
-            
-            // تحديث رابط التنزيل
-            downloadBtn.href = filename;
-            downloadBtn.setAttribute('download', filename);
-            
-            // إظهار النافذة
-            actionModal.style.display = 'flex';
-            shareOptions.classList.remove('active');
-        }
+                return `
+                    <div class="zone-header">
+                        <div class="breadcrumb">
+                            <span onclick="app.navigate('home')">CORE</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin:0 5px"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <span onclick="app.navigate('subject', '${s.id}')">${s.name}</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin:0 5px"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <span style="color:var(--subject-accent)">${cat}s</span>
+                        </div>
+                        <h2 style="font-size: 4rem; font-weight: 900; margin-bottom: 2rem; color:#fff">${cat} Repository</h2>
+                        <div class="file-list">
+                            ${files.map(f => `
+                                <div class="file-row" onclick="window.open('${f.fileName}', '_blank')">
+                                    <div class="file-icon-box">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            ${f.type === 'Recording' ? '<path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>' : '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline>'}
+                                        </svg>
+                                    </div>
+                                    <div style="flex-grow:1">
+                                        <div class="file-name">${f.name}</div>
+                                        <div class="file-meta">ACCESS: ${f.isExternal ? 'Cloud Sync' : 'Direct Link'}</div>
+                                    </div>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="color:var(--slate-400)"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            },
 
-        // دالة فتح الملف الإضافي
-        function openAdditionalFile(subjectId, filename) {
-            const subject = subjects[subjectId];
-            currentSubject = subject.name;
-            currentLecture = 'إضافي';
-            currentFile = filename;
-            
-            // تحديث عنوان النافذة
-            modalTitle.textContent = `ملف إضافي - ${subject.name}`;
-            modalSubtitle.textContent = `اختر الإجراء الذي تريد تنفيذه للملف الإضافي`;
-            
-            // تحديث رابط التنزيل
-            downloadBtn.href = filename;
-            downloadBtn.setAttribute('download', filename);
-            
-            // إظهار النافذة
-            actionModal.style.display = 'flex';
-            shareOptions.classList.remove('active');
-        }
+            getCatIcon(type) {
+                if (type === 'Lecture') return '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>';
+                if (type === 'Section') return '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line>';
+                if (type === 'Question') return '<circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line>';
+                if (type === 'Recording') return '<path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>';
+                return '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line>';
+            },
 
-        // إغلاق النافذة
-        closeModalBtn.addEventListener('click', function() {
-            actionModal.style.display = 'none';
-        });
-
-        // زر المشاركة
-        shareBtn.addEventListener('click', function() {
-            shareOptions.classList.toggle('active');
-            
-            // إنشاء رابط المشاركة
-            const pageUrl = window.location.href.split('#')[0];
-            let shareUrl;
-            
-            if (currentLecture === 'إضافي') {
-                shareUrl = `${pageUrl}#${currentSubject.replace(/\s+/g, '-')}/additional/${currentFile}`;
-            } else {
-                shareUrl = `${pageUrl}#${currentSubject.replace(/\s+/g, '-')}/lecture/${currentLecture}`;
-            }
-            
-            shareLinkInput.value = shareUrl;
-        });
-
-        // نسخ الرابط
-        copyLinkBtn.addEventListener('click', function() {
-            shareLinkInput.select();
-            shareLinkInput.setSelectionRange(0, 99999);
-            
-            try {
-                navigator.clipboard.writeText(shareLinkInput.value).then(() => {
-                    showNotification('تم نسخ رابط المشاركة بنجاح!');
-                }).catch(() => {
-                    document.execCommand('copy');
-                    showNotification('تم نسخ رابط المشاركة بنجاح!');
+            attachCardEffects() {
+                document.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('mousemove', (e) => {
+                        const r = card.getBoundingClientRect();
+                        const rotateX = (e.clientY - r.top - r.height/2) / 12;
+                        const rotateY = (r.width/2 - (e.clientX - r.left)) / 12;
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-15px) scale(1.02)`;
+                    });
+                    card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0) rotateX(0) rotateY(0) scale(1)');
                 });
-            } catch (err) {
-                document.execCommand('copy');
-                showNotification('تم نسخ رابط المشاركة بنجاح!');
-            }
-        });
+            },
 
-        // إظهار الإشعار
-        function showNotification(message) {
-            notificationText.textContent = message;
-            notification.classList.add('show');
+            initCanvas() {
+                const c = document.getElementById('cosmic-bg'), ctx = c.getContext('2d');
+                let w = c.width = window.innerWidth, h = c.height = window.innerHeight, stars = [];
+                const init = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; stars = Array.from({length:80}, () => ({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.5, o:Math.random(), s:Math.random()*0.005})); };
+                const draw = () => { ctx.clearRect(0,0,w,h); stars.forEach(s => { s.o += s.s; if(s.o > 1 || s.o < 0) s.s *= -1; ctx.fillStyle=`rgba(255,255,255,${s.o*0.25})`; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(draw); };
+                window.onresize = init; init(); draw();
+            },
             
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+            handleSearch(v) { /* Global search core */ }
+        };
 
-        // إغلاق النافذة عند النقر خارجها
-        window.addEventListener('click', function(event) {
-            if (event.target === actionModal) {
-                actionModal.style.display = 'none';
-            }
-        });
-
-        // معالجة الروابط من الهاش
-        function handleHash() {
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                const parts = hash.split('/');
-                if (parts.length >= 2) {
-                    const subjectKey = Object.keys(subjects).find(key => 
-                        subjects[key].name.replace(/\s+/g, '-') === parts[0]
-                    );
-                    
-                    if (subjectKey) {
-                        showSubject(subjectKey);
-                        
-                        if (parts[1] === 'lecture' && parts[2]) {
-                            setTimeout(() => {
-                                openLecture(subjectKey, parseInt(parts[2]));
-                            }, 500);
-                        } else if (parts[1] === 'additional' && parts[2]) {
-                            setTimeout(() => {
-                                openAdditionalFile(subjectKey, decodeURIComponent(parts[2]));
-                            }, 500);
-                        }
-                    }
-                }
-            }
-        }
-
-        // الاستماع لتغير الهاش
-        window.addEventListener('hashchange', handleHash);
-
-        // التهيئة عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            handleHash();
-        });
-
-        // دعم اختصار الزر الأيمن للماوس
-        document.addEventListener('contextmenu', function(e) {
-            const target = e.target;
-            if (target.classList.contains('lecture-card') || target.classList.contains('additional-file')) {
-                e.preventDefault();
-                const subjectCard = target.closest('.subject-content');
-                if (subjectCard) {
-                    const subjectId = Object.keys(subjects).find(id => 
-                        subjects[id].name === subjectCard.querySelector('.subject-title').textContent.trim()
-                    );
-                    
-                    if (target.classList.contains('lecture-card')) {
-                        const lectureNum = parseInt(target.querySelector('.lecture-number').textContent);
-                        openLecture(subjectId, lectureNum);
-                    } else {
-                        const filename = target.querySelector('p').textContent;
-                        openAdditionalFile(subjectId, filename);
-                    }
-                }
-            }
-        });
+        window.onload = () => app.init();
     </script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
