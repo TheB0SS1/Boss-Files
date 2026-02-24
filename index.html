@@ -9,6 +9,8 @@
         :root {
             --bg-deep: #020617;
             --bg-deep-rgb: 2, 6, 23;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
             --subject-accent: #3b82f6;
             --subject-accent-low: rgba(59, 130, 246, 0.1);
             --subject-accent-rgb: 59, 130, 246;
@@ -20,15 +22,37 @@
             --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
         }
 
+        .light-mode {
+            --bg-deep: #f1f5f9;
+            --bg-deep-rgb: 241, 245, 249;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --slate-100: #0f172a;
+            --slate-300: #334155;
+            --slate-400: #64748b;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(15, 23, 42, 0.1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
 
         body {
             background-color: var(--bg-deep);
-            color: var(--slate-100);
+            color: var(--text-main);
             font-family: var(--font-sans);
             overflow-x: hidden;
             line-height: 1.5;
             transition: background-color 0.8s ease;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5.878 18.09h19.022l-15.389 11.18 5.878 18.09-15.389-11.18-15.389 11.18 5.878-18.09-15.389-11.18h19.022z' fill='%23ffd700' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
         }
 
         .container { max-width: 1300px; margin: 0 auto; padding: 0 2rem; }
@@ -46,7 +70,19 @@
             z-index: 1000;
         }
 
-        .nav-content { display: flex; justify-content: flex-end; align-items: center; width: 100%; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+
+        .theme-toggle {
+            background: rgba(var(--subject-accent-rgb), 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--subject-accent);
+            width: 3rem; height: 3rem;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .theme-toggle:hover { transform: scale(1.1); background: rgba(var(--subject-accent-rgb), 0.2); }
 
         .search-input {
             background: rgba(255, 255, 255, 0.05);
@@ -102,7 +138,7 @@
             display: flex; align-items: center; justify-content: center;
         }
         .search-item-info { flex-grow: 1; }
-        .search-item-name { font-weight: 700; color: #fff; font-size: 0.95rem; }
+        .search-item-name { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
         .search-item-meta { font-size: 0.7rem; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.05em; }
         
         .no-results {
@@ -168,8 +204,8 @@
             right: 2rem;
             z-index: 500;
             pointer-events: none;
-            opacity: 0.6;
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+            opacity: 0.8;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
             animation: float-ramadan 4s ease-in-out infinite;
         }
         @keyframes float-ramadan {
@@ -196,25 +232,26 @@
             white-space: nowrap;
         }
 
-        /* Fairy Lights around Logo */
+        /* Islamic Decor around Logo */
         .lights-container {
             position: absolute;
-            inset: -20px;
+            inset: -40px;
             pointer-events: none;
             z-index: -1;
         }
-        .light-bulb {
+        .islamic-item {
             position: absolute;
-            width: 8px;
-            height: 12px;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            background: #fff;
-            box-shadow: 0 0 10px #fff;
-            animation: glow-light 1.5s infinite alternate;
+            transform: translate(-50%, -50%);
+            animation: glow-islamic 2s infinite alternate;
+            filter: drop-shadow(0 0 10px currentColor);
         }
-        @keyframes glow-light {
-            from { opacity: 0.4; transform: scale(0.8); box-shadow: 0 0 5px currentColor; }
-            to { opacity: 1; transform: scale(1.1); box-shadow: 0 0 20px currentColor; }
+        .light-mode .islamic-item {
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.2));
+            opacity: 0.8;
+        }
+        @keyframes glow-islamic {
+            from { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
         }
         
         /* Lanterns */
@@ -233,30 +270,143 @@
             50% { transform: rotate(5deg); }
         }
 
-        /* Elite 3D Logo Header */
-        .hero { text-align: center; padding: 12rem 0 6rem; position: relative; }
-        
-        .logo-3d {
-            font-size: clamp(3rem, 12vw, 7rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.25em;
-            display: inline-block;
+        /* Weekly Update Banner */
+        .update-banner {
+            background: rgba(var(--subject-accent-rgb), 0.1);
+            border: 1px solid var(--subject-accent);
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .update-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            animation: shine-banner 3s infinite;
+        }
+        @keyframes shine-banner {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .update-icon {
+            width: 3.5rem; height: 3.5rem;
+            background: var(--subject-accent);
             color: #fff;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(var(--subject-accent-rgb), 0.4);
+        }
+        .update-content { flex-grow: 1; z-index: 1; }
+        .update-title { font-weight: 800; font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.25rem; }
+        .update-desc { font-size: 0.85rem; color: var(--slate-400); font-weight: 600; }
+        
+        .weekly-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .weekly-link {
+            background: rgba(var(--subject-accent-rgb), 0.15);
+            border: 1px solid rgba(var(--subject-accent-rgb), 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--subject-accent);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .weekly-link:hover {
+            background: var(--subject-accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .celebration-banner {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+        }
+        .celebration-banner .update-title, .celebration-banner .update-desc { color: #000; }
+        .celebration-banner .update-icon { background: #000; color: #ffd700; }
+
+        /* Elite 3D Logo Header */
+        .hero { text-align: center; padding: 10rem 0 6rem; position: relative; }
+        
+        .logo-container {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
             animation: float-3d 6s ease-in-out infinite;
-            text-shadow: 
-                0 1px 0 #333, 
-                0 2px 0 #222, 
-                0 3px 0 #111, 
-                0 4px 0 #000,
-                0 10px 40px rgba(var(--subject-accent-rgb), 0.4);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
+
+        .logo-boss {
+            font-size: clamp(4rem, 15vw, 9rem);
+            font-weight: 950;
+            letter-spacing: -0.04em;
+            line-height: 0.8;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gold-shimmer 5s linear infinite;
+            filter: drop-shadow(0 10px 30px rgba(255, 215, 0, 0.2));
+            position: relative;
+        }
+
+        .logo-files {
+            font-size: clamp(1rem, 4vw, 2.5rem);
+            font-weight: 300;
+            letter-spacing: 0.8em;
+            text-transform: none;
+            color: var(--slate-400);
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            position: relative;
+            padding-left: 0.8em; /* Offset for letter spacing */
+        }
+
+        .logo-files::before, .logo-files::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 2rem;
+            height: 1px;
+            background: var(--glass-border);
+        }
+        .logo-files::before { left: -1rem; }
+        .logo-files::after { right: 1rem; }
+
+        @keyframes gold-shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .light-mode .logo-boss {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 50%, #0f172a 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+        }
+
+        .light-mode .logo-files {
+            color: var(--text-muted);
+        }
+
         @keyframes float-3d {
-            0%, 100% { transform: translateY(0) rotateX(0deg) scale(1); }
-            50% { transform: translateY(-20px) rotateX(15deg) scale(1.02); }
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-15px) rotateX(10deg); }
         }
 
         /* Subject Grid - Cosmic Cards */
@@ -278,6 +428,11 @@
             cursor: pointer; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative; overflow: hidden;
             transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .light-mode .card {
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.05);
         }
         .card:hover { 
             transform: translateY(-15px) scale(1.02);
@@ -286,7 +441,7 @@
             box-shadow: 0 40px 100px -20px rgba(0,0,0,0.6);
         }
         
-        .card h3 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .card h3 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main); text-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .card span { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3em; color: var(--slate-400); }
 
         .energy-aura { 
@@ -306,7 +461,7 @@
             font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em;
         }
         .breadcrumb span { cursor: pointer; transition: all 0.3s; }
-        .breadcrumb span:hover { color: #fff; text-shadow: 0 0 10px #fff; }
+        .breadcrumb span:hover { color: var(--text-main); text-shadow: 0 0 10px var(--subject-accent); }
 
         .category-grid {
             display: grid;
@@ -341,7 +496,7 @@
             transition: all 0.4s;
         }
         .cat-card:hover .cat-icon { background: var(--subject-accent); color: #fff; transform: scale(1.1) rotate(-5deg); box-shadow: 0 0 30px var(--subject-accent); }
-        .cat-card h4 { font-size: 1.6rem; font-weight: 800; color: #fff; }
+        .cat-card h4 { font-size: 1.6rem; font-weight: 800; color: var(--text-main); }
         .cat-card p { font-size: 0.85rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
 
         /* File List - High Tech Rows */
@@ -364,7 +519,7 @@
         }
         .file-row:hover .file-icon-box { background: var(--subject-accent); color: #fff; }
 
-        .file-name { font-weight: 800; color: #fff; font-size: 1.3rem; }
+        .file-name { font-weight: 800; color: var(--text-main); font-size: 1.3rem; }
         .file-meta { font-size: 0.75rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
         /* Minimal Footer */
@@ -409,7 +564,7 @@
             font-size: 1.6rem;
             font-weight: 900;
             margin-bottom: 2.5rem;
-            color: #fff;
+            color: var(--text-main);
             line-height: 1.2;
         }
         .modal-actions {
@@ -417,11 +572,11 @@
             gap: 1.25rem;
         }
         .action-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(var(--subject-accent-rgb), 0.05);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 1.25rem;
-            color: #fff;
+            color: var(--text-main);
             font-weight: 800;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -436,6 +591,7 @@
         .action-btn:hover {
             background: var(--subject-accent);
             border-color: var(--subject-accent);
+            color: #fff;
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(var(--subject-accent-rgb), 0.3);
         }
@@ -450,8 +606,8 @@
             font-size: 0.8rem;
         }
         .action-btn.cancel:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            background: rgba(var(--subject-accent-rgb), 0.1);
             transform: none;
             box-shadow: none;
         }
@@ -480,6 +636,11 @@
 
     <nav>
         <div class="container nav-content">
+            <div class="theme-toggle" onclick="app.toggleTheme()">
+                <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </div>
             <div class="search-container">
                 <input type="text" class="search-input" placeholder="ACCESS DATA CORE..." oninput="app.handleSearch(this.value)" onfocus="app.handleSearch(this.value)" onblur="setTimeout(() => app.closeSearch(), 200)">
                 <div id="search-results" class="search-results"></div>
@@ -571,16 +732,37 @@
             init() {
                 this.render();
                 this.initCanvas();
+                this.initTheme();
                 
-                // Show notification once after 3 seconds
-                if (!window.notificationShown) {
+                // Request notification permission
+                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+
+                // Show notification once per session/forever using localStorage
+                const lastShown = localStorage.getItem('boss_notif_v5');
+                if (!lastShown) {
                     setTimeout(() => {
-                        const toast = document.getElementById('notif-toast');
-                        if (!toast) return;
+                        localStorage.setItem('boss_notif_v5', 'true');
                         
-                        toast.classList.add('active');
-                        window.notificationShown = true;
+                        const message = "نظام الإشعارات الذكي قادم قريباً v5.0 Beta";
                         
+                        // Try Native Notification first
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification("Boss Files — Elite Repository", {
+                                body: message,
+                                icon: "https://cdn-icons-png.flaticon.com/512/1827/1827347.png"
+                            });
+                        } else {
+                            // Fallback to Toast
+                            const toast = document.getElementById('notif-toast');
+                            if (toast) {
+                                toast.classList.add('active');
+                                setTimeout(() => toast.classList.remove('active'), 6000);
+                            }
+                        }
+                        
+                        // Play notification sound
                         const playSound = () => {
                             try {
                                 const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
@@ -599,7 +781,6 @@
                         });
                         
                         setTimeout(() => {
-                            toast.classList.remove('active');
                             window.removeEventListener('click', playSound);
                             window.removeEventListener('keydown', playSound);
                         }, 6000);
@@ -607,11 +788,42 @@
                 }
             },
 
+            initTheme() {
+                const hour = new Date().getHours();
+                const isDay = hour >= 6 && hour < 18;
+                if (isDay) {
+                    document.documentElement.classList.add('light-mode');
+                } else {
+                    document.documentElement.classList.remove('light-mode');
+                }
+                this.updateThemeIcon();
+            },
+
+            toggleTheme() {
+                document.documentElement.classList.toggle('light-mode');
+                this.updateThemeIcon();
+                this.updateTheme(this.selectedSubject?.color, this.selectedSubject?.colorRGB);
+            },
+
+            updateThemeIcon() {
+                const icon = document.getElementById('theme-icon');
+                if (document.documentElement.classList.contains('light-mode')) {
+                    icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+                } else {
+                    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+                }
+            },
+
             updateTheme(color, rgb) {
                 const logo = document.querySelector('.logo-3d');
                 const notifToast = document.getElementById('notif-toast');
+                const isLight = document.documentElement.classList.contains('light-mode');
+
                 if (color && logo) {
-                    logo.style.textShadow = `0 1px 0 #333, 0 2px 0 #111, 0 10px 50px rgba(${rgb}, 0.5)`;
+                    logo.style.textShadow = isLight 
+                        ? `0 1px 0 #ddd, 0 2px 0 #ccc, 0 10px 50px rgba(${rgb}, 0.3)`
+                        : `0 1px 0 #333, 0 2px 0 #111, 0 10px 50px rgba(${rgb}, 0.5)`;
+                    
                     document.documentElement.style.setProperty('--subject-accent', color);
                     document.documentElement.style.setProperty('--subject-accent-rgb', rgb);
                     document.documentElement.style.setProperty('--subject-accent-low', `rgba(${rgb}, 0.1)`);
@@ -619,23 +831,35 @@
                     if (notifToast) notifToast.style.borderColor = color;
                     
                     // Deep immersive background calculation
-                    const rgbArr = rgb.split(',').map(x => Math.floor(parseInt(x) * 0.05));
+                    const factor = isLight ? 0.98 : 0.05;
+                    const rgbArr = rgb.split(',').map(x => Math.floor(parseInt(x) * factor));
                     const deepRgb = rgbArr.join(',');
                     document.documentElement.style.setProperty('--bg-deep-rgb', deepRgb);
                     document.documentElement.style.setProperty('--bg-deep', `rgb(${deepRgb})`);
                     
                     document.body.style.backgroundColor = `var(--bg-deep)`;
-                    window.starColor = `rgba(${rgb}, `;
+                    window.starColor = isLight ? `rgba(15, 23, 42, ` : `rgba(${rgb}, `;
                 } else if (logo) {
-                    logo.style.textShadow = `0 1px 0 #333, 0 2px 0 #222, 0 3px 0 #111, 0 4px 0 #000, 0 10px 40px rgba(59, 130, 246, 0.4)`;
+                    logo.style.textShadow = isLight
+                        ? `0 1px 0 #ddd, 0 2px 0 #ccc, 0 10px 40px rgba(59, 130, 246, 0.2)`
+                        : `0 1px 0 #333, 0 2px 0 #222, 0 3px 0 #111, 0 4px 0 #000, 0 10px 40px rgba(59, 130, 246, 0.4)`;
+                    
                     document.documentElement.style.setProperty('--subject-accent', '#3b82f6');
                     document.documentElement.style.setProperty('--subject-accent-rgb', '59, 130, 246');
                     document.documentElement.style.setProperty('--subject-accent-low', 'rgba(59, 130, 246, 0.1)');
-                    document.documentElement.style.setProperty('--bg-deep-rgb', '2, 6, 23');
-                    document.documentElement.style.setProperty('--bg-deep', '#020617');
+                    
+                    if (isLight) {
+                        document.documentElement.style.setProperty('--bg-deep-rgb', '248, 250, 252');
+                        document.documentElement.style.setProperty('--bg-deep', '#f8fafc');
+                        document.body.style.backgroundColor = '#f8fafc';
+                        window.starColor = `rgba(15, 23, 42, `;
+                    } else {
+                        document.documentElement.style.setProperty('--bg-deep-rgb', '2, 6, 23');
+                        document.documentElement.style.setProperty('--bg-deep', '#020617');
+                        document.body.style.backgroundColor = '#020617';
+                        window.starColor = `rgba(255, 255, 255, `;
+                    }
                     if (notifToast) notifToast.style.borderColor = '#3b82f6';
-                    document.body.style.backgroundColor = '#020617';
-                    window.starColor = `rgba(255, 255, 255, `;
                 }
             },
 
@@ -672,15 +896,52 @@
             },
 
             renderHome() {
+                const updateInfo = this.getWeeklyUpdate();
                 return `
                     <div class="hero">
-                        <div style="position: relative; display: inline-block;">
-                            <div class="logo-3d">Boss Files</div>
+                        <div class="logo-container">
+                            <div class="logo-boss">BOSS</div>
+                            <div class="logo-files">Files</div>
                             <div class="lights-container">
-                                ${this.generateLights()}
+                                ${this.generateIslamicDecor()}
                             </div>
                         </div>
                     </div>
+
+                    ${updateInfo.isCelebration ? `
+                        <div class="update-banner celebration-banner">
+                            <div class="update-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9a6 6 0 1 0 12 0"></path><path d="M12 15v6"></path><path d="M9 21h6"></path></svg>
+                            </div>
+                            <div class="update-content">
+                                <div class="update-title">تم اكتمال المنهج بنجاح! 🎉</div>
+                                <div class="update-desc">تم رفع جميع المحاضرات (1-12) لكل المواد. بالتوفيق في الامتحانات!</div>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="update-banner">
+                            <div class="update-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+                            </div>
+                            <div class="update-content">
+                                <div class="update-title">آخر التحديثات 🚀</div>
+                                <div class="update-desc">تم إضافة المحاضرات الجديدة لجميع المواد الدراسية:</div>
+                                <div class="weekly-links">
+                                    ${SUBJECT_DATA.map(s => {
+                                        const isDelayed = s.id === 'psych' || s.id === 'oral-path';
+                                        const subjectWeek = isDelayed ? updateInfo.weekNum - 1 : updateInfo.weekNum;
+                                        if (subjectWeek < 1) return ''; // Don't show if week is less than 1
+                                        return `
+                                            <div class="weekly-link" onclick="app.goToWeeklyFile('${s.id}', ${subjectWeek})">
+                                                Lec ${subjectWeek} — ${s.name}
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `}
+
                     <div class="grid">
                         ${SUBJECT_DATA.map(s => `
                             <div class="card" onclick="app.navigate('subject', '${s.id}')">
@@ -694,18 +955,56 @@
                 `;
             },
 
-            generateLights() {
-                let lights = '';
-                const colors = ['#ffd700', '#00ff00', '#ff0000', '#0000ff', '#ff00ff'];
-                for(let i = 0; i < 24; i++) {
-                    const angle = (i / 24) * Math.PI * 2;
-                    const x = 50 + Math.cos(angle) * 55;
-                    const y = 50 + Math.sin(angle) * 65;
+            getWeeklyUpdate() {
+                // Reference: Feb 25, 2026 (Wednesday) is Week 3
+                const startDate = new Date('2026-02-25T00:00:00');
+                const now = new Date();
+                
+                // Calculate weeks passed since start date
+                const diffTime = now - startDate;
+                const weeksPassed = Math.floor(diffTime / (7 * 24 * 60 * 60 * 1000));
+                
+                let weekNum = 3 + weeksPassed;
+                
+                // Ensure we don't go below 1 if somehow the date is much earlier
+                if (weekNum < 1) weekNum = 1;
+                
+                return {
+                    weekNum: weekNum,
+                    isCelebration: weekNum > 12
+                };
+            },
+
+            goToWeeklyFile(subId, weekNum) {
+                const fileId = `${subId}-Lecture-${weekNum}`;
+                // Navigate to the category first to ensure context
+                this.navigate('category', subId, 'Lecture');
+                // Then open the file actions
+                setTimeout(() => this.openFileActions(fileId), 100);
+            },
+
+            generateIslamicDecor() {
+                let decor = '';
+                const items = [
+                    '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>', // Star
+                    '<path d="M12 3a9 9 0 1 0 9 9 9.75 9.75 0 0 1-9-9z"/>', // Crescent
+                    '<path d="M12 2l4 4v10l-4 4-4-4V6l4-4z M12 6v10 M8 10h8"/>' // Lantern
+                ];
+                const colors = ['#ffd700', '#ffcc00', '#ffaa00'];
+                for(let i = 0; i < 20; i++) {
+                    const angle = (i / 20) * Math.PI * 2;
+                    const x = 50 + Math.cos(angle) * 60;
+                    const y = 50 + Math.sin(angle) * 70;
                     const color = colors[i % colors.length];
+                    const icon = items[i % items.length];
                     const delay = Math.random() * 2;
-                    lights += `<div class="light-bulb" style="left: ${x}%; top: ${y}%; color: ${color}; background: ${color}; animation-delay: ${delay}s;"></div>`;
+                    decor += `
+                        <div class="islamic-item" style="left: ${x}%; top: ${y}%; color: ${color}; animation-delay: ${delay}s;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">${icon}</svg>
+                        </div>
+                    `;
                 }
-                return lights;
+                return decor;
             },
 
             renderLanterns() {
