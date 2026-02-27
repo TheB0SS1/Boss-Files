@@ -121,8 +121,11 @@
             .container { padding: 0 1rem; width: 100%; }
             .nav-content { padding: 0.5rem 0; gap: 0.5rem; }
             
-            .search-input { width: 9rem; font-size: 0.75rem; padding: 0.45rem 0.7rem; }
-            .search-input:focus { width: 11rem; }
+            .search-input { width: 12rem; }
+            .search-toggle { width: 2.5rem; height: 2.5rem; }
+            
+            .theme-toggle, .tasks-toggle, .app-download-link, .back-btn { width: 2.5rem; height: 2.5rem; }
+            .nav-controls { gap: 0.5rem; }
             
             .update-banner { flex-direction: column; text-align: center; padding: 1.25rem; gap: 0.75rem; border-radius: 16px; margin-bottom: 2rem; }
             .update-icon { width: 2.2rem; height: 2.2rem; }
@@ -170,79 +173,435 @@
             height: 5rem;
             display: flex;
             align-items: center;
-            background: rgba(var(--bg-deep-rgb), 0.7);
-            backdrop-filter: blur(20px);
+            background: rgba(var(--bg-deep-rgb), 0.8);
+            backdrop-filter: blur(25px);
             border-bottom: 1px solid var(--glass-border);
             z-index: 1000;
         }
 
-        .nav-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-
-        .theme-toggle {
-            background: rgba(var(--subject-accent-rgb), 0.1);
-            border: 1px solid var(--glass-border);
-            color: var(--subject-accent);
-            width: 3rem; height: 3rem;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .theme-toggle:hover { transform: scale(1.1); background: rgba(var(--subject-accent-rgb), 0.2); }
-
-        .app-download-link {
-            width: 3rem; height: 3rem;
-            background: rgba(76, 175, 80, 0.1);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: #4CAF50;
-            text-decoration: none;
-        }
-        .app-download-link:hover { 
-            background: #4CAF50; 
-            color: #fff; 
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        }
-
+        .nav-content { display: flex; justify-content: center; align-items: center; width: 100%; position: relative; min-height: 4rem; }
         .nav-controls {
             display: flex;
+            flex-direction: row;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.4rem 1rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        /* Icon Notification Styles */
+        .icon-notif {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: var(--subject-accent);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1100;
+        }
+        .icon-notif::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-bottom-color: var(--subject-accent);
+        }
+        .icon-notif.active {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+        .icon-notif.download { background: #4CAF50; }
+        .icon-notif.download::before { border-bottom-color: #4CAF50; }
+
+        .theme-toggle, .tasks-toggle, .app-download-link, .back-btn, .search-toggle {
+            position: relative;
+            width: 2.8rem; height: 2.8rem;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .back-btn { background: rgba(255,255,255,0.05); border-color: var(--glass-border); color: var(--slate-400); display: none; }
+        .back-btn.active { display: flex; }
+        .back-btn:hover { background: rgba(255,255,255,0.1); color: #fff; transform: scale(1.1); }
+
+        .search-toggle { background: rgba(255,255,255,0.05); border-color: var(--glass-border); color: var(--slate-400); }
+        .search-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; transform: scale(1.1); }
+        .search-toggle.active { color: var(--subject-accent); border-color: var(--subject-accent); }
+
+        .theme-toggle { background: rgba(var(--subject-accent-rgb), 0.1); border-color: var(--glass-border); color: var(--subject-accent); }
+        .theme-toggle:hover { transform: scale(1.1); background: rgba(var(--subject-accent-rgb), 0.2); }
+
+        .tasks-toggle { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); color: #3b82f6; }
+        .tasks-toggle:hover { background: #3b82f6; color: #fff; transform: scale(1.1); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+
+        .app-download-link { background: rgba(76, 175, 80, 0.1); border-color: rgba(76, 175, 80, 0.3); color: #4CAF50; text-decoration: none; }
+        .app-download-link:hover { background: #4CAF50; color: #fff; transform: scale(1.1); box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+
+        .search-container {
+            position: absolute;
+            right: 0;
+            display: flex;
+            align-items: center;
+        }
+        .tasks-container {
+            padding: 2rem 0;
+            animation: fadeIn 0.5s ease;
+        }
+        .tasks-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .tasks-header h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, var(--subject-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .quote-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .quote-card::before {
+            content: '“';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 5rem;
+            opacity: 0.1;
+            font-family: serif;
+        }
+        .quote-text {
+            font-family: 'Amiri', serif;
+            font-size: 1.6rem;
+            color: var(--text-main);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .quote-author {
+            font-size: 0.9rem;
+            color: var(--subject-accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .task-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--subject-accent);
+            background: rgba(var(--subject-accent-rgb), 0.05);
+        }
+        .task-subject {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .task-list::-webkit-scrollbar { width: 4px; }
+        .task-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .task-item:hover { background: rgba(255,255,255,0.08); }
+        .task-item.done { opacity: 0.5; border-color: rgba(76, 175, 80, 0.2); }
+        .task-item.done .task-check { background: #4CAF50; border-color: #4CAF50; }
+        
+        .task-check {
+            width: 18px; height: 18px;
+            border: 2px solid var(--slate-400);
+            border-radius: 5px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .task-check svg { display: none; }
+        .task-item.done .task-check svg { display: block; }
+
+        .task-progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .task-progress-fill {
+            height: 100%;
+            background: var(--subject-accent);
+            transition: width 1s ease-in-out;
+        }
+        .task-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--slate-400);
+            font-weight: 600;
+        }
+        .task-status {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            background: rgba(var(--subject-accent-rgb), 0.1);
+            color: var(--subject-accent);
+        }
+
+        .privacy-note {
+            margin-top: 4rem;
+            background: rgba(var(--subject-accent-rgb), 0.05);
+            border: 1px solid rgba(var(--subject-accent-rgb), 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: slideUp 0.5s ease;
+        }
+        .privacy-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            background: rgba(var(--subject-accent-rgb), 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--subject-accent);
+            flex-shrink: 0;
+        }
+        .privacy-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--slate-300);
+        }
+        .privacy-text strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Video Widget Styles */
+        .video-widget {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            width: 180px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 1500;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .video-widget.active { display: flex; }
+        .video-widget.fullscreen {
+            width: 100vw;
+            height: 100vh;
+            bottom: 0;
+            left: 0;
+            border-radius: 0;
+            background: #000;
+            z-index: 2000;
+        }
+        
+        .video-widget-header {
+            padding: 0.6rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .video-widget-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--subject-accent);
+            letter-spacing: 0.05em;
+        }
+        .video-widget-close {
+            cursor: pointer;
+            color: var(--slate-400);
+            transition: color 0.2s;
+        }
+        .video-widget-close:hover { color: #ff4444; }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9/16;
+            background: #000;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: object-fit 0.5s;
+        }
+        .video-widget.fullscreen .video-container {
+            height: 100%;
+            aspect-ratio: auto;
+        }
+        .video-widget.fullscreen .video-container video {
+            object-fit: contain;
+        }
+        
+        .video-controls-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .video-container:hover .video-controls-overlay,
+        .video-container.paused .video-controls-overlay { opacity: 1; }
+        
+        .play-pause-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .video-widget {
+                bottom: 1rem;
+                left: 1rem;
+                width: 140px;
+            }
         }
 
         .search-input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 0.7rem 1.25rem;
-            color: white;
-            font-size: 0.85rem;
-            width: 18rem;
-            transition: all 0.4s;
+            width: 100%;
+            background: rgba(var(--bg-deep-rgb), 0.98);
+            border: 1px solid var(--subject-accent);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            outline: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        .search-input:focus { outline: none; border-color: var(--subject-accent); width: 22rem; background: rgba(255,255,255,0.08); box-shadow: 0 0 30px rgba(var(--subject-accent-rgb), 0.2); }
 
-        .search-container { position: relative; }
+        .search-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            background: rgba(var(--bg-deep-rgb), 0.8);
+            backdrop-filter: blur(15px);
+            padding: 0 1rem;
+        }
+        .search-container.active { display: flex; }
+
+        .search-input-wrapper {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
         .search-results {
             position: absolute;
-            top: calc(100% + 1rem);
-            right: 0;
-            width: 25rem;
-            background: rgba(var(--bg-deep-rgb), 0.95);
+            top: calc(100% + 0.5rem);
+            left: 0;
+            width: 100%;
+            background: rgba(var(--bg-deep-rgb), 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            max-height: 30rem;
+            border-radius: 20px;
+            max-height: 25rem;
             overflow-y: auto;
             display: none;
             flex-direction: column;
-            padding: 1rem;
-            z-index: 1100;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            padding: 0.75rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         }
         .search-results.active { display: flex; }
         .search-item {
@@ -315,6 +674,11 @@
             0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
             70% { box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
             100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
         .notif-text {
             font-size: 0.9rem;
@@ -756,6 +1120,24 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
+    <div id="video-widget" class="video-widget">
+        <div class="video-widget-header">
+            <span class="video-widget-title">فيديو لقلبك ❤️</span>
+            <div class="video-widget-close" onclick="app.closeVideoWidget()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+        </div>
+        <div class="video-container paused" onclick="app.toggleVideoPlay()">
+            <video id="heart-video" loop playsinline></video>
+            <div id="video-overlay" class="video-controls-overlay">
+                <div class="play-pause-btn">
+                    <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                    <svg id="pause-icon" style="display:none" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <canvas id="cosmic-bg"></canvas>
 
     <div class="ramadan-decor">
@@ -776,21 +1158,43 @@
     <nav>
         <div class="container nav-content">
             <div class="nav-controls">
+                <div id="back-btn" class="back-btn" onclick="app.goBack()" title="Go Back">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </div>
+                <div class="search-toggle" onclick="app.toggleSearch()" title="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
                 <div class="theme-toggle" onclick="app.toggleTheme()">
                     <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
                 </div>
-                <a href="https://vida-prod-webdev-app.s3.us-east-1.amazonaws.com/android-builds/109428570/dc7a33f8-6f6f-42a4-a139-06f6048f5414/boss-files-app-v1_0_0.apk?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAZV3A2ECZO4N7RSPW%2F20260224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260224T152438Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=504e4d601ba31fe21e856cf88225440a5845e600b0ce69c85fb0f32043c0f49b" target="_blank" class="app-download-link" title="تحميل التطبيق">
+                <div id="tasks-nav-btn" class="tasks-toggle" onclick="app.navigate('tasks')" title="Study Tasks">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <div id="tasks-notif" class="icon-notif">خطة المذاكرة جاهزة! 📚</div>
+                </div>
+                <a id="download-nav-btn" href="https://vida-prod-webdev-app.s3.us-east-1.amazonaws.com/android-builds/109428570/dc7a33f8-6f6f-42a4-a139-06f6048f5414/boss-files-app-v1_0_0.apk?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAZV3A2ECZO4N7RSPW%2F20260224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260224T152438Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=504e4d601ba31fe21e856cf88225440a5845e600b0ce69c85fb0f32043c0f49b" target="_blank" class="app-download-link" title="تحميل التطبيق">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
+                    <div id="download-notif" class="icon-notif download">تطبيق الأندرويد متاح! 📱</div>
                 </a>
             </div>
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="ACCESS DATA CORE..." oninput="app.handleSearch(this.value)" onfocus="app.handleSearch(this.value)" onblur="setTimeout(() => app.closeSearch(), 200)">
+                <div id="search-wrapper" class="search-input-wrapper">
+                    <input type="text" id="main-search" class="search-input" placeholder="ACCESS DATA CORE..." oninput="app.handleSearch(this.value)" onblur="setTimeout(() => app.closeSearch(), 200)">
+                </div>
                 <div id="search-results" class="search-results"></div>
             </div>
         </div>
@@ -839,12 +1243,12 @@
         const GENERAL_TELEGRAM = "https://t.me/theboss230";
 
         const SUBJECTS = [
-            { id: 'oral-path', name: 'Oral Pathology', color: '#3b82f6', colorRGB: '59, 130, 246', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
-            { id: 'pharma', name: 'Pharmacology', color: '#ef4444', colorRGB: '239, 68, 68', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
-            { id: 'psych', name: 'Psychology', color: '#8b5cf6', colorRGB: '139, 92, 246', filesCount: { Lecture: 12, Section: 0, Question: 10, Extra: 5, Recording: 1 } },
-            { id: 'tech-fixed-2', name: 'Tech Fixed 2', color: '#10b981', colorRGB: '16, 185, 129', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
-            { id: 'tech-op', name: 'Tech-Operative', color: '#14b8a6', colorRGB: '20, 184, 166', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
-            { id: 'tech-rem', name: 'Tech-Removable', color: '#f59e0b', colorRGB: '245, 158, 11', filesCount: { Lecture: 12, Section: 10, Question: 10, Extra: 5, Recording: 1 } }
+            { id: 'oral-path', name: 'Oral Pathology', color: '#3b82f6', colorRGB: '59, 130, 246', filesCount: { Lecture: 14, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'pharma', name: 'Pharmacology', color: '#ef4444', colorRGB: '239, 68, 68', filesCount: { Lecture: 14, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'psych', name: 'Psychology', color: '#8b5cf6', colorRGB: '139, 92, 246', filesCount: { Lecture: 14, Section: 0, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'tech-fixed-2', name: 'Tech Fixed 2', color: '#10b981', colorRGB: '16, 185, 129', filesCount: { Lecture: 14, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'tech-op', name: 'Tech-Operative', color: '#14b8a6', colorRGB: '20, 184, 166', filesCount: { Lecture: 14, Section: 10, Question: 10, Extra: 5, Recording: 1 } },
+            { id: 'tech-rem', name: 'Tech-Removable', color: '#f59e0b', colorRGB: '245, 158, 11', filesCount: { Lecture: 14, Section: 10, Question: 10, Extra: 5, Recording: 1 } }
         ];
 
         const generateFiles = (subject) => {
@@ -876,11 +1280,96 @@
             selectedSubject: null,
             selectedCategory: null,
             activeFile: null,
+            history: [],
+            videoFullscreenTimer: null,
+
+            initVideoWidget() {
+                const widget = document.getElementById('video-widget');
+                const video = document.getElementById('heart-video');
+                if (!widget || !video) return;
+
+                // Pick random video 1-6
+                const randomNum = Math.floor(Math.random() * 6) + 1;
+                const videoUrl = `${randomNum}.mp4`;
+                const fallbackUrl = "https://www.w3schools.com/html/mov_bbb.mp4"; // Reliable fallback
+                
+                // Set source directly
+                video.src = videoUrl;
+
+                // Handle errors by switching to fallback
+                video.onerror = () => {
+                    if (video.src.indexOf(fallbackUrl) === -1) {
+                        console.warn(`Video ${videoUrl} not found, using fallback.`);
+                        video.src = fallbackUrl;
+                        video.load();
+                    }
+                };
+                
+                // Show widget after 3 seconds - NO AWAIT to ensure it always shows
+                setTimeout(() => {
+                    widget.classList.add('active');
+                    
+                    // Auto-close after 60 seconds
+                    setTimeout(() => {
+                        this.closeVideoWidget();
+                    }, 60000);
+                }, 3000);
+            },
+
+            closeVideoWidget() {
+                const widget = document.getElementById('video-widget');
+                const video = document.getElementById('heart-video');
+                if (widget) {
+                    widget.classList.remove('active');
+                    widget.classList.remove('fullscreen');
+                }
+                if (video) video.pause();
+                if (this.videoFullscreenTimer) {
+                    clearTimeout(this.videoFullscreenTimer);
+                    this.videoFullscreenTimer = null;
+                }
+            },
+
+            toggleVideoPlay() {
+                const video = document.getElementById('heart-video');
+                const container = document.querySelector('.video-container');
+                const widget = document.getElementById('video-widget');
+                const playIcon = document.getElementById('play-icon');
+                const pauseIcon = document.getElementById('pause-icon');
+                
+                if (video.paused) {
+                    video.play();
+                    container.classList.remove('paused');
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+
+                    // Start timer for fullscreen
+                    if (this.videoFullscreenTimer) clearTimeout(this.videoFullscreenTimer);
+                    this.videoFullscreenTimer = setTimeout(() => {
+                        if (!video.paused) {
+                            widget.classList.add('fullscreen');
+                        }
+                    }, 4000);
+                } else {
+                    video.pause();
+                    container.classList.add('paused');
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+
+                    // Cancel fullscreen timer
+                    if (this.videoFullscreenTimer) {
+                        clearTimeout(this.videoFullscreenTimer);
+                        this.videoFullscreenTimer = null;
+                    }
+                    widget.classList.remove('fullscreen');
+                }
+            },
 
             init() {
                 this.render();
                 this.initCanvas();
                 this.initTheme();
+                this.initVideoWidget();
                 
                 // Check for user name
                 const savedName = localStorage.getItem('boss_user_name');
@@ -899,68 +1388,23 @@
                     Notification.requestPermission();
                 }
 
-                // Show notification once per session/forever using localStorage
-                const lastShown = localStorage.getItem('boss_notif_v5');
-                if (!lastShown && savedName) { // Only show if name is already set
-                    setTimeout(() => {
-                        localStorage.setItem('boss_notif_v5', 'true');
-                        
-                        const message = `يا ${savedName}، نظام الإشعارات الذكي قادم قريباً v5.0 Beta`;
-                        
-                        const toast = document.getElementById('notif-toast');
-                        if (toast) {
-                            toast.innerText = message;
-                            toast.classList.add('active');
-                            setTimeout(() => toast.classList.remove('active'), 4000);
-                        }
-                    }, 2000);
-                }
+                // Show App Download notification (Icon Dropdown)
+                setTimeout(() => {
+                    const downloadNotif = document.getElementById('download-notif');
+                    if (downloadNotif) {
+                        downloadNotif.classList.add('active');
+                        setTimeout(() => downloadNotif.classList.remove('active'), 5000);
+                    }
+                }, 4000);
 
-                // Show App Download notification after a delay
-                const appNotifShown = sessionStorage.getItem('boss_app_notif');
-                if (!appNotifShown && savedName) {
-                    setTimeout(() => {
-                        const toast = document.getElementById('notif-toast');
-                        if (toast) {
-                            sessionStorage.setItem('boss_app_notif', 'true');
-                            const appLink = "https://vida-prod-webdev-app.s3.us-east-1.amazonaws.com/android-builds/109428570/dc7a33f8-6f6f-42a4-a139-06f6048f5414/boss-files-app-v1_0_0.apk?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAZV3A2ECZO4N7RSPW%2F20260224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260224T152438Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=504e4d601ba31fe21e856cf88225440a5845e600b0ce69c85fb0f32043c0f49b";
-                            const message = `يا ${savedName}، تم إطلاق تطبيق الأندرويد! اضغط هنا للتحميل 📱`;
-                            
-                            toast.innerHTML = `<a href="${appLink}" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 12px; width: 100%;">
-                                <div class="notif-icon" style="animation: pulse-green 2s infinite; background: #4CAF50; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                </div>
-                                <div style="flex-grow: 1;">
-                                    <div style="font-weight: 800; font-size: 0.95rem; margin-bottom: 2px;">تطبيق Boss Files متاح الآن!</div>
-                                    <div style="font-size: 0.8rem; opacity: 0.8;">${message}</div>
-                                </div>
-                            </a>`;
-                            
-                            toast.classList.add('active');
-                            
-                            // Sound and Vibration Effect
-                            try {
-                                // Vibration
-                                if ("vibrate" in navigator) {
-                                    navigator.vibrate([200, 100, 200]);
-                                }
-                                // Sound
-                                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
-                                audio.volume = 0.5;
-                                audio.play().catch(() => {
-                                    // Fallback for browsers that block auto-play
-                                    const playOnInteraction = () => {
-                                        audio.play();
-                                        window.removeEventListener('click', playOnInteraction);
-                                    };
-                                    window.addEventListener('click', playOnInteraction);
-                                });
-                            } catch (e) { console.log('Notif effects failed'); }
-
-                            setTimeout(() => toast.classList.remove('active'), 12000);
-                        }
-                    }, 7000);
-                }
+                // Show Tasks notification (Icon Dropdown)
+                setTimeout(() => {
+                    const tasksNotif = document.getElementById('tasks-notif');
+                    if (tasksNotif) {
+                        tasksNotif.classList.add('active');
+                        setTimeout(() => tasksNotif.classList.remove('active'), 5000);
+                    }
+                }, 10000); // Increased delay to 10s to avoid overlap (4s + 5s = 9s)
             },
 
             submitName() {
@@ -1051,10 +1495,22 @@
             },
 
             navigate(view, subId = null, cat = null) {
+                // Save current state to history before navigating
+                if (this.view !== view || (subId && this.selectedSubject?.id !== subId) || (cat && this.selectedCategory !== cat)) {
+                    this.history.push({ view: this.view, subId: this.selectedSubject?.id, cat: this.selectedCategory });
+                }
+
                 this.view = view;
                 this.selectedSubject = subId ? SUBJECT_DATA.find(s => s.id === subId) : null;
                 this.selectedCategory = cat;
                 
+                // Update back button visibility
+                const backBtn = document.getElementById('back-btn');
+                if (backBtn) {
+                    if (this.history.length > 0) backBtn.classList.add('active');
+                    else backBtn.classList.remove('active');
+                }
+
                 // CRITICAL: Scroll to top on every navigation
                 window.scrollTo(0, 0);
                 document.documentElement.scrollTop = 0;
@@ -1070,11 +1526,30 @@
                 setTimeout(() => this.updateTheme(this.selectedSubject?.color, this.selectedSubject?.colorRGB), 50);
             },
 
+            goBack() {
+                if (this.history.length > 0) {
+                    const prev = this.history.pop();
+                    this.view = prev.view;
+                    this.selectedSubject = prev.subId ? SUBJECT_DATA.find(s => s.id === prev.subId) : null;
+                    this.selectedCategory = prev.cat;
+
+                    const backBtn = document.getElementById('back-btn');
+                    if (backBtn) {
+                        if (this.history.length > 0) backBtn.classList.add('active');
+                        else backBtn.classList.remove('active');
+                    }
+
+                    this.render();
+                    setTimeout(() => this.updateTheme(this.selectedSubject?.color, this.selectedSubject?.colorRGB), 50);
+                }
+            },
+
             render() {
                 const root = document.getElementById('app-root');
                 if (this.view === 'home') root.innerHTML = this.renderHome();
                 else if (this.view === 'subject') root.innerHTML = this.renderSubjectZone();
                 else if (this.view === 'category') root.innerHTML = this.renderCategoryFiles();
+                else if (this.view === 'tasks') root.innerHTML = this.renderTasks();
                 
                 if (this.view === 'home') this.attachCardEffects();
                 
@@ -1121,7 +1596,7 @@
                                 <div class="weekly-links">
                                     ${SUBJECT_DATA.map(s => {
                                         const isDelayed = s.id === 'psych' || s.id === 'oral-path';
-                                        const subjectWeek = isDelayed ? updateInfo.weekNum - 1 : updateInfo.weekNum;
+                                        const subjectWeek = isDelayed ? Math.max(3, updateInfo.weekNum - 1) : Math.max(3, updateInfo.weekNum);
                                         if (subjectWeek < 1) return ''; // Don't show if week is less than 1
                                         return `
                                             <div class="weekly-link" onclick="app.goToWeeklyFile('${s.id}', ${subjectWeek})">
@@ -1135,6 +1610,11 @@
                     `}
 
                     <div class="grid">
+                        <div class="card" onclick="app.navigate('tasks')" style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.05);">
+                            <h3 style="color: #3b82f6;">Study Tasks</h3>
+                            <span>WEEKLY PROGRESS</span>
+                            <div class="energy-aura" style="--aura-color: #3b82f6;"></div>
+                        </div>
                         ${SUBJECT_DATA.map(s => `
                             <div class="card" onclick="app.navigate('subject', '${s.id}')">
                                 <h3>${s.name}</h3>
@@ -1147,23 +1627,194 @@
             },
 
             getWeeklyUpdate() {
-                // Reference: Feb 25, 2026 (Wednesday) is Week 3
-                const startDate = new Date('2026-02-25T00:00:00');
+                // Reference: Saturday Feb 7, 2026 was Week 1
+                const referenceDate = new Date('2026-02-07T00:00:00');
                 const now = new Date();
                 
-                // Calculate weeks passed since start date
-                const diffTime = now - startDate;
+                // Calculate weeks passed since reference date
+                const diffTime = now - referenceDate;
                 const weeksPassed = Math.floor(diffTime / (7 * 24 * 60 * 60 * 1000));
                 
-                let weekNum = 3 + weeksPassed;
+                let weekNum = 1 + weeksPassed;
                 
-                // Ensure we don't go below 1 if somehow the date is much earlier
+                // Ensure we don't go below 1
                 if (weekNum < 1) weekNum = 1;
                 
                 return {
                     weekNum: weekNum,
-                    isCelebration: weekNum > 12
+                    isCelebration: weekNum > 14
                 };
+            },
+
+            renderTasks() {
+                const updateInfo = this.getWeeklyUpdate();
+                const quotes = [
+                    { text: "فوق بقى 😤 مفيش نجاح بييجي وانت نايم.", author: "Boss" },
+                    { text: "قوم افتح الكتاب… مستقبلك مستنيك 📚✨", author: "Boss" },
+                    { text: "ساعة مذاكرة دلوقتي = راحة ضمير بعدين 😌", author: "Boss" },
+                    { text: "بلاش دلع… شد حيلك شوية 💪", author: "Boss" },
+                    { text: "انت قدها والله بس قوم الأول 👊", author: "Boss" },
+                    { text: "كل صفحة بتخلصها بتقربك من حلمك 🎯", author: "Boss" },
+                    { text: "سيب الموبايل شوية… هو مش هيطير 😂📵", author: "Boss" },
+                    { text: "ركز النهارده عشان بكرة ترفع راسك 🏆", author: "Boss" },
+                    { text: "التعب ده مؤقت… الفخر دايم 🌟", author: "Boss" },
+                    { text: "متأجلش حاجة عشان الندم وحش 😶", author: "Boss" },
+                    { text: "انت مش أقل من حد… بس لازم تشتغل 💯", author: "Boss" },
+                    { text: "افتكر انت بدأت ليه من الأول 🤔🔥", author: "Boss" },
+                    { text: "يلا ساعتين تركيز بس وهتحس بالفرق ⏳", author: "Boss" },
+                    { text: "لو زهقت خد بريك صغير وارجع أقوى ☕📖", author: "Boss" },
+                    { text: "اللي بيذاكر بدري بيرتاح بدري 😉", author: "Boss" },
+                    { text: "قوم اعمل اللي عليك وسيب الباقي على ربنا 🤍", author: "Boss" },
+                    { text: "مش لازم تبقى مثالي… بس لازم تبقى ملتزم ✔️", author: "Boss" },
+                    { text: "كل يوم تضيعُه مش هيرجع تاني ⌛", author: "Boss" },
+                    { text: "انت بتحارب عشان نسخة أحسن منك 💥", author: "Boss" },
+                    { text: "شد حيلك عشان تيجي النتيجة تفرحك 😍", author: "Boss" },
+                    { text: "خليك فاكر إن محدش هينجح مكانك ✋", author: "Boss" },
+                    { text: "النهارده تعب… بكرة قبض 💸", author: "Boss" },
+                    { text: "المذاكرة دي استثمار في نفسك 📈", author: "Boss" },
+                    { text: "قوم قبل ما الحماس يهرب منك 😅", author: "Boss" },
+                    { text: "متقولش بكرة… بكرة دي كذبة 😏", author: "Boss" },
+                    { text: "حتى لو مش طايق… اعمل اللي عليك 😤", author: "Boss" },
+                    { text: "النجاح مش بالحظ… بالعرق 💦", author: "Boss" },
+                    { text: "اللي بيتعب شوية بيوصل أسرع 🚀", author: "Boss" },
+                    { text: "ذاكر عشان تبقى فخور بنفسك مش عشان حد 👌", author: "Boss" },
+                    { text: "مفيش إحساس أحلى من إنك تكون جاهز 😌", author: "Boss" },
+                    { text: "لو وقعت قوم تاني… بس متقعدش ❌", author: "Boss" },
+                    { text: "كل دقيقة تركيز بتفرق 🔥", author: "Boss" },
+                    { text: "خليك تقيل كده على نفسك واشتغل 🧠", author: "Boss" },
+                    { text: "متخليش الكسل يكسبك 😴🚫", author: "Boss" },
+                    { text: "افتح الكتاب حتى لو غصب عنك… البداية أهم حاجة 📖", author: "Boss" },
+                    { text: "ركز في خطوتك الجاية بس 👣", author: "Boss" },
+                    { text: "انت بتبني مستقبلك سطر سطر ✍️", author: "Boss" },
+                    { text: "سيب الأعذار للي مش عايز ينجح 🙅‍♂️", author: "Boss" },
+                    { text: "قوم دلوقتي حالًا… مفيش بعدين ⏰", author: "Boss" },
+                    { text: "خليك فاكر إن حلمك مستاهل 💫", author: "Boss" },
+                    { text: "كل تعب ليه مقابل 👑", author: "Boss" },
+                    { text: "النجاح بيحب الناس اللي بتسعى ❤️🔥", author: "Boss" },
+                    { text: "لو محدش شايف تعبك… ربنا شايف 🤍", author: "Boss" },
+                    { text: "متستناش حد يشجعك… شجع نفسك 👏", author: "Boss" },
+                    { text: "انت مشروع نجاح ماشي على الأرض 😎", author: "Boss" },
+                    { text: "ركز في هدفك وسيب الدوشة 🎧📚", author: "Boss" },
+                    { text: "خليك سابق نفسك كل يوم 🏃‍♂️", author: "Boss" },
+                    { text: "اللي يزرع يحصد… ازرع مذاكرة 🌱", author: "Boss" },
+                    { text: "قوم خلص اللي وراك عشان تنام وانت مرتاح 😴✨", author: "Boss" },
+                    { text: "يلا بقى كفاية كلام… افتح الكتاب وابدأ دلوقتي 🔥📖", author: "Boss" }
+                ];
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                
+                // Get completed tasks from localStorage
+                const completedTasks = JSON.parse(localStorage.getItem('boss_tasks_done_v2') || '{}');
+
+                return `
+                    <div class="tasks-container">
+                        <div class="tasks-header">
+                            <h2>Study Plan & Tasks</h2>
+                            <p style="color: var(--slate-400); font-weight: 600;">Track your academic progress and stay ahead of the curve.</p>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-text">${randomQuote.text}</div>
+                            <div class="quote-author">— ${randomQuote.author}</div>
+                        </div>
+
+                        <div class="task-grid">
+                            ${SUBJECT_DATA.map(s => {
+                                const isDelayed = s.id === 'psych' || s.id === 'oral-path';
+                                const availableLecs = isDelayed ? updateInfo.weekNum - 1 : updateInfo.weekNum;
+                                const safeLecs = Math.max(0, Math.min(14, availableLecs));
+                                
+                                // Section logic: Oral Path (2 sections), Pharma (1 section)
+                                let availableSecs = 0;
+                                if (s.id === 'oral-path') availableSecs = updateInfo.weekNum - 1;
+                                else if (s.id === 'pharma') availableSecs = updateInfo.weekNum - 2;
+                                const safeSecs = Math.max(0, availableSecs);
+
+                                const subjectDone = completedTasks[s.id] || [];
+                                
+                                // Count total available tasks (lecs + secs)
+                                const totalAvailable = safeLecs + safeSecs;
+                                const doneCount = subjectDone.length;
+                                const progress = totalAvailable > 0 ? (doneCount / totalAvailable) * 100 : 0;
+                                
+                                let taskItems = '';
+                                
+                                // Render Lectures
+                                for (let i = 1; i <= safeLecs; i++) {
+                                    const taskId = `lec-${i}`;
+                                    const isDone = subjectDone.includes(taskId);
+                                    taskItems += `
+                                        <div class="task-item ${isDone ? 'done' : ''}" onclick="app.toggleTask('${s.id}', '${taskId}')">
+                                            <div class="task-check">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                            <span style="font-size: 0.85rem; font-weight: 700;">Lecture ${i}</span>
+                                        </div>
+                                    `;
+                                }
+
+                                // Render Sections
+                                for (let i = 1; i <= safeSecs; i++) {
+                                    const taskId = `sec-${i}`;
+                                    const isDone = subjectDone.includes(taskId);
+                                    taskItems += `
+                                        <div class="task-item ${isDone ? 'done' : ''}" onclick="app.toggleTask('${s.id}', '${taskId}')">
+                                            <div class="task-check">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                            <span style="font-size: 0.85rem; font-weight: 700;">Section ${i}</span>
+                                        </div>
+                                    `;
+                                }
+
+                                return `
+                                    <div class="task-card">
+                                        <div class="task-subject">
+                                            <span>${s.name}</span>
+                                            <span class="task-status">${doneCount >= totalAvailable && totalAvailable > 0 ? 'COMPLETED' : 'IN PROGRESS'}</span>
+                                        </div>
+                                        <div class="task-progress-bar">
+                                            <div class="task-progress-fill" style="width: ${progress}%; background: ${s.color};"></div>
+                                        </div>
+                                        <div class="task-stats">
+                                            <span>DONE: ${doneCount} / ${totalAvailable}</span>
+                                            <span>${Math.round(progress)}%</span>
+                                        </div>
+                                        <div class="task-list">
+                                            ${taskItems || '<div style="text-align:center; padding:1rem; opacity:0.5; font-size:0.8rem;">No tasks unlocked yet.</div>'}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <div class="privacy-note">
+                            <div class="privacy-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            </div>
+                            <div class="privacy-text">
+                                <strong>خصوصية بياناتك:</strong> جميع مهامك وتقدمك الدراسي يتم تخزينها محلياً على جهازك فقط. مستحيل أي شخص (بما في ذلك صاحب الموقع) يقدر يوصل لبياناتك أو يعرف إنت ذاكرت إيه. بياناتك ملكك إنت وبس.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            toggleTask(subId, taskId) {
+                const completedTasks = JSON.parse(localStorage.getItem('boss_tasks_done_v2') || '{}');
+                if (!completedTasks[subId]) completedTasks[subId] = [];
+                
+                const index = completedTasks[subId].indexOf(taskId);
+                if (index > -1) {
+                    completedTasks[subId].splice(index, 1);
+                } else {
+                    completedTasks[subId].push(taskId);
+                }
+                
+                localStorage.setItem('boss_tasks_done_v2', JSON.stringify(completedTasks));
+                this.render();
+                
+                // Haptic feedback if supported
+                if ("vibrate" in navigator) navigator.vibrate(50);
             },
 
             goToWeeklyFile(subId, weekNum) {
@@ -1295,7 +1946,7 @@
             
             handleSearch(v) {
                 const resultsContainer = document.getElementById('search-results');
-                if (!v || v.length < 2) {
+                if (!v || v.length < 1) {
                     resultsContainer.classList.remove('active');
                     return;
                 }
@@ -1333,7 +1984,27 @@
             },
 
             closeSearch() {
-                document.getElementById('search-results').classList.remove('active');
+                const container = document.querySelector('.search-container');
+                const resultsContainer = document.getElementById('search-results');
+                const toggle = document.querySelector('.search-toggle');
+                
+                if (container) container.classList.remove('active');
+                if (resultsContainer) resultsContainer.classList.remove('active');
+                if (toggle) toggle.classList.remove('active');
+            },
+
+            toggleSearch() {
+                const container = document.querySelector('.search-container');
+                const input = document.getElementById('main-search');
+                const toggle = document.querySelector('.search-toggle');
+                
+                if (container.classList.contains('active')) {
+                    this.closeSearch();
+                } else {
+                    container.classList.add('active');
+                    toggle.classList.add('active');
+                    input.focus();
+                }
             },
 
             selectSearchResult(fileId, subjectName) {
