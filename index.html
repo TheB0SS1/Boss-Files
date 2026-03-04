@@ -1160,8 +1160,8 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <div id="intro-overlay" class="intro-overlay" onclick="app.unmuteIntro()">
-        <video id="intro-video" playsinline autoplay muted preload="auto" onerror="app.hideIntro()"></video>
+    <div id="intro-overlay" class="intro-overlay">
+        <video id="intro-video" playsinline preload="auto" onerror="app.hideIntro()"></video>
         <div class="intro-skip" onclick="app.hideIntro()">تخطي</div>
     </div>
 
@@ -1333,28 +1333,41 @@
                 if (video) {
                     const videoUrl = 'intro.mp4';
                     try {
+                        video.onended = () => this.hideIntro();
+                        video.onerror = () => {
+                            console.warn("Intro video error, skipping.");
+                            this.hideIntro();
+                        };
+
                         const response = await fetch(videoUrl, { method: 'HEAD' });
-                        if (response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        if (response.ok && contentType && contentType.startsWith('video/')) {
                             video.src = videoUrl;
-                            
-                            // Try to play with sound first (might work if user has interacted before)
                             video.muted = false;
-                            video.play().catch(() => {
-                                // If blocked, play muted (this is allowed by browsers)
-                                video.muted = true;
-                                video.play();
-                                
-                                // Add a one-time listener to unmute on first click anywhere
-                                const unmuteOnFirstClick = () => {
-                                    video.muted = false;
-                                    document.removeEventListener('click', unmuteOnFirstClick);
-                                    document.removeEventListener('touchstart', unmuteOnFirstClick);
-                                };
-                                document.addEventListener('click', unmuteOnFirstClick);
-                                document.addEventListener('touchstart', unmuteOnFirstClick);
-                            });
+                            video.volume = 1.0;
+                            
+                            // Attempt to play with sound immediately
+                            const playPromise = video.play();
+                            
+                            if (playPromise !== undefined) {
+                                playPromise.catch(error => {
+                                    console.warn("Autoplay with sound was blocked by browser. Playing muted as fallback.");
+                                    video.muted = true;
+                                    video.play();
+                                    
+                                    // Unmute on first user interaction with the page
+                                    const unmute = () => {
+                                        video.muted = false;
+                                        video.volume = 1.0;
+                                        window.removeEventListener('click', unmute);
+                                        window.removeEventListener('touchstart', unmute);
+                                    };
+                                    window.addEventListener('click', unmute);
+                                    window.addEventListener('touchstart', unmute);
+                                });
+                            }
                         } else {
-                            console.warn("intro.mp4 not found, skipping intro.");
+                            console.warn("intro.mp4 not found or invalid type, skipping intro.");
                             this.hideIntro();
                             return;
                         }
@@ -1366,8 +1379,6 @@
                     
                     // Force hide after exactly 10 seconds as requested
                     setTimeout(() => this.hideIntro(), 10000);
-                    video.onended = () => this.hideIntro();
-                    video.onerror = () => this.hideIntro();
                 }
             },
 
@@ -1396,6 +1407,12 @@
                 const video = document.getElementById('heart-video');
                 if (!widget || !video) return;
 
+                // Handle errors
+                video.onerror = () => {
+                    console.warn(`Video error. Widget will be hidden.`);
+                    this.closeVideoWidget();
+                };
+
                 // Pick random video 1-6
                 const randomNum = Math.floor(Math.random() * 6) + 1;
                 const videoUrl = `${randomNum}.mp4`;
@@ -1403,7 +1420,8 @@
                 try {
                     // Check if file exists before setting src to avoid console errors
                     const response = await fetch(videoUrl, { method: 'HEAD' });
-                    if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    if (response.ok && contentType && contentType.startsWith('video/')) {
                         video.src = videoUrl;
                         
                         // Show widget after 3 seconds
@@ -1419,17 +1437,11 @@
                             }, 60000);
                         }, 3000);
                     } else {
-                        console.warn(`Video ${videoUrl} not found. Widget will be hidden.`);
+                        console.warn(`Video ${videoUrl} not found or invalid type. Widget will be hidden.`);
                     }
                 } catch (e) {
                     console.warn(`Error checking video ${videoUrl}:`, e);
                 }
-
-                // Handle errors
-                video.onerror = () => {
-                    console.warn(`Video ${videoUrl} error. Widget will be hidden.`);
-                    this.closeVideoWidget();
-                };
             },
 
             closeVideoWidget() {
