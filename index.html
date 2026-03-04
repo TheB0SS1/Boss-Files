@@ -1101,6 +1101,69 @@
             color: var(--slate-400);
             font-size: 0.8rem;
         }
+        /* Intro Overlay */
+        .intro-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        .intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .intro-skip {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: rgba(255,255,255,0.5);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 100px;
+            transition: all 0.3s;
+        }
+        .intro-skip:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            border-color: #fff;
+        }
+
+        .intro-play-btn {
+            position: absolute;
+            z-index: 10;
+            background: #fff;
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.2);
+            transition: transform 0.3s;
+            font-family: inherit;
+        }
+        .intro-play-btn:hover {
+            transform: scale(1.05);
+        }
+        .intro-play-btn.hidden {
+            display: none;
+        }
+
         .action-btn.cancel:hover {
             color: var(--text-main);
             background: rgba(var(--subject-accent-rgb), 0.1);
@@ -1120,6 +1183,15 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
+    <div id="intro-overlay" class="intro-overlay">
+        <video id="intro-video" playsinline preload="auto" onerror="app.hideIntro()"></video>
+        <div id="intro-play-btn" class="intro-play-btn" onclick="app.playIntroWithSound()">
+            <span>تشغيل الفيديو بصوت</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div class="intro-skip" onclick="app.hideIntro()">تخطي</div>
+    </div>
+
     <div id="video-widget" class="video-widget">
         <div class="video-widget-header">
             <span class="video-widget-title">فيديو لقلبك ❤️</span>
@@ -1283,7 +1355,66 @@
             history: [],
             videoFullscreenTimer: null,
 
-            initVideoWidget() {
+            async startIntro() {
+                const video = document.getElementById('intro-video');
+                const playBtn = document.getElementById('intro-play-btn');
+                if (video) {
+                    const videoUrl = 'intro.mp4';
+                    try {
+                        const response = await fetch(videoUrl, { method: 'HEAD' });
+                        if (response.ok) {
+                            video.src = videoUrl;
+                            // We don't call play() here because we want sound, 
+                            // and browsers block autoplay with sound.
+                            // We wait for the user to click the play button.
+                        } else {
+                            console.warn("intro.mp4 not found, skipping intro.");
+                            this.hideIntro();
+                            return;
+                        }
+                    } catch (e) {
+                        console.warn("Error checking intro video:", e);
+                        this.hideIntro();
+                        return;
+                    }
+                    
+                    // Force hide after exactly 10 seconds as requested
+                    setTimeout(() => this.hideIntro(), 10000);
+                    video.onended = () => this.hideIntro();
+                    video.onerror = () => this.hideIntro();
+                }
+            },
+
+            playIntroWithSound() {
+                const video = document.getElementById('intro-video');
+                const playBtn = document.getElementById('intro-play-btn');
+                if (video && playBtn) {
+                    video.play().then(() => {
+                        playBtn.classList.add('hidden');
+                    }).catch(e => {
+                        console.error("Manual play failed:", e);
+                        // Fallback to muted if even manual play fails (rare)
+                        video.muted = true;
+                        video.play();
+                        playBtn.classList.add('hidden');
+                    });
+                }
+            },
+
+            hideIntro() {
+                const overlay = document.getElementById('intro-overlay');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    // Now check for name modal
+                    const savedName = localStorage.getItem('boss_user_name');
+                    if (!savedName) {
+                        const modal = document.getElementById('name-modal');
+                        if (modal) modal.classList.add('active');
+                    }
+                }
+            },
+
+            async initVideoWidget() {
                 const widget = document.getElementById('video-widget');
                 const video = document.getElementById('heart-video');
                 if (!widget || !video) return;
@@ -1291,29 +1422,37 @@
                 // Pick random video 1-6
                 const randomNum = Math.floor(Math.random() * 6) + 1;
                 const videoUrl = `${randomNum}.mp4`;
-                const fallbackUrl = "https://www.w3schools.com/html/mov_bbb.mp4"; // Reliable fallback
                 
-                // Set source directly
-                video.src = videoUrl;
-
-                // Handle errors by switching to fallback
-                video.onerror = () => {
-                    if (video.src.indexOf(fallbackUrl) === -1) {
-                        console.warn(`Video ${videoUrl} not found, using fallback.`);
-                        video.src = fallbackUrl;
-                        video.load();
+                try {
+                    // Check if file exists before setting src to avoid console errors
+                    const response = await fetch(videoUrl, { method: 'HEAD' });
+                    if (response.ok) {
+                        video.src = videoUrl;
+                        
+                        // Show widget after 3 seconds
+                        setTimeout(() => {
+                            // Only show if no error occurred
+                            if (video.networkState === 3 || video.error) return;
+                            
+                            widget.classList.add('active');
+                            
+                            // Auto-close after 60 seconds
+                            setTimeout(() => {
+                                this.closeVideoWidget();
+                            }, 60000);
+                        }, 3000);
+                    } else {
+                        console.warn(`Video ${videoUrl} not found. Widget will be hidden.`);
                     }
+                } catch (e) {
+                    console.warn(`Error checking video ${videoUrl}:`, e);
+                }
+
+                // Handle errors
+                video.onerror = () => {
+                    console.warn(`Video ${videoUrl} error. Widget will be hidden.`);
+                    this.closeVideoWidget();
                 };
-                
-                // Show widget after 3 seconds - NO AWAIT to ensure it always shows
-                setTimeout(() => {
-                    widget.classList.add('active');
-                    
-                    // Auto-close after 60 seconds
-                    setTimeout(() => {
-                        this.closeVideoWidget();
-                    }, 60000);
-                }, 3000);
             },
 
             closeVideoWidget() {
@@ -1370,17 +1509,21 @@
                 this.initCanvas();
                 this.initTheme();
                 this.initVideoWidget();
+                this.startIntro();
                 
-                // Check for user name
+                // Check for user name - MOVED TO hideIntro or delayed
                 const savedName = localStorage.getItem('boss_user_name');
                 if (!savedName) {
-                    const modal = document.getElementById('name-modal');
-                    modal.classList.add('active');
+                    // We don't show it immediately anymore, it shows after intro
+                    // modal.classList.add('active');
                     
                     // Add Enter key listener
                     document.getElementById('user-name-input').addEventListener('keypress', (e) => {
                         if (e.key === 'Enter') this.submitName();
                     });
+                } else {
+                    // If name exists, we still need to hide intro to show content
+                    // But intro overlay is visible by default, so it stays until user clicks
                 }
 
                 // Request notification permission
