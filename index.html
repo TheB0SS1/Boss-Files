@@ -1141,29 +1141,6 @@
             border-color: #fff;
         }
 
-        .intro-play-btn {
-            position: absolute;
-            z-index: 10;
-            background: #fff;
-            color: #000;
-            padding: 1rem 2rem;
-            border-radius: 100px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.2);
-            transition: transform 0.3s;
-            font-family: inherit;
-        }
-        .intro-play-btn:hover {
-            transform: scale(1.05);
-        }
-        .intro-play-btn.hidden {
-            display: none;
-        }
-
         .action-btn.cancel:hover {
             color: var(--text-main);
             background: rgba(var(--subject-accent-rgb), 0.1);
@@ -1183,12 +1160,8 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <div id="intro-overlay" class="intro-overlay">
-        <video id="intro-video" playsinline preload="auto" onerror="app.hideIntro()"></video>
-        <div id="intro-play-btn" class="intro-play-btn" onclick="app.playIntroWithSound()">
-            <span>تشغيل الفيديو بصوت</span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        </div>
+    <div id="intro-overlay" class="intro-overlay" onclick="app.unmuteIntro()">
+        <video id="intro-video" playsinline autoplay muted preload="auto" onerror="app.hideIntro()"></video>
         <div class="intro-skip" onclick="app.hideIntro()">تخطي</div>
     </div>
 
@@ -1357,16 +1330,29 @@
 
             async startIntro() {
                 const video = document.getElementById('intro-video');
-                const playBtn = document.getElementById('intro-play-btn');
                 if (video) {
                     const videoUrl = 'intro.mp4';
                     try {
                         const response = await fetch(videoUrl, { method: 'HEAD' });
                         if (response.ok) {
                             video.src = videoUrl;
-                            // We don't call play() here because we want sound, 
-                            // and browsers block autoplay with sound.
-                            // We wait for the user to click the play button.
+                            
+                            // Try to play with sound first (might work if user has interacted before)
+                            video.muted = false;
+                            video.play().catch(() => {
+                                // If blocked, play muted (this is allowed by browsers)
+                                video.muted = true;
+                                video.play();
+                                
+                                // Add a one-time listener to unmute on first click anywhere
+                                const unmuteOnFirstClick = () => {
+                                    video.muted = false;
+                                    document.removeEventListener('click', unmuteOnFirstClick);
+                                    document.removeEventListener('touchstart', unmuteOnFirstClick);
+                                };
+                                document.addEventListener('click', unmuteOnFirstClick);
+                                document.addEventListener('touchstart', unmuteOnFirstClick);
+                            });
                         } else {
                             console.warn("intro.mp4 not found, skipping intro.");
                             this.hideIntro();
@@ -1385,19 +1371,10 @@
                 }
             },
 
-            playIntroWithSound() {
+            unmuteIntro() {
                 const video = document.getElementById('intro-video');
-                const playBtn = document.getElementById('intro-play-btn');
-                if (video && playBtn) {
-                    video.play().then(() => {
-                        playBtn.classList.add('hidden');
-                    }).catch(e => {
-                        console.error("Manual play failed:", e);
-                        // Fallback to muted if even manual play fails (rare)
-                        video.muted = true;
-                        video.play();
-                        playBtn.classList.add('hidden');
-                    });
+                if (video) {
+                    video.muted = false;
                 }
             },
 
