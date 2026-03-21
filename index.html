@@ -696,28 +696,28 @@
             color: var(--slate-400);
         }
 
-        /* Ramadan Decor - Simplified */
-        .ramadan-decor {
+        /* Festive Decor - Eid */
+        .festive-decor {
             position: fixed;
             top: 5.5rem;
             right: 1rem;
             z-index: 500;
             pointer-events: none;
-            opacity: 0.6;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
-            animation: float-ramadan 6s ease-in-out infinite;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            animation: float-festive 6s ease-in-out infinite;
         }
-        @keyframes float-ramadan {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes float-festive {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
         }
-        .crescent {
+        .festive-icon {
             color: #ffd700;
-            width: 2.5rem;
-            height: 2.5rem;
+            width: 3rem;
+            height: 3rem;
         }
 
-        .ramadan-kareem-banner {
+        .eid-banner {
             font-family: 'Aref Ruqaa', serif;
             color: #ffd700;
             font-size: clamp(2.5rem, 8vw, 4.5rem);
@@ -732,6 +732,17 @@
         @keyframes blink-glow {
             0%, 100% { opacity: 1; filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 215, 0, 0.8)); }
             50% { opacity: 0.6; filter: brightness(0.8) drop-shadow(0 0 5px rgba(255, 215, 0, 0.3)); }
+        }
+
+        /* Page Transitions */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .page-transition.active {
+            opacity: 1;
+            transform: translateY(0);
         }
         .lights-container {
             position: absolute;
@@ -1120,20 +1131,32 @@
         .intro-video {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
         }
         .intro-skip {
             position: absolute;
             top: 2rem;
             right: 2rem;
-            color: rgba(255,255,255,0.5);
-            font-size: 1rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.6rem 1.5rem;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 100px;
             transition: all 0.3s;
+            display: none;
+            z-index: 10001;
+        }
+        .intro-skip.visible {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .intro-skip:hover {
             color: #fff;
@@ -1161,8 +1184,8 @@
 </head>
 <body>
     <div id="intro-overlay" class="intro-overlay">
-        <video id="intro-video" playsinline preload="auto" onerror="app.hideIntro()"></video>
-        <div class="intro-skip" onclick="app.hideIntro()">تخطي</div>
+        <video id="intro-video" class="intro-video" playsinline preload="auto" onerror="app.hideIntro()"></video>
+        <div id="intro-skip" class="intro-skip" onclick="app.hideIntro()">تخطي</div>
     </div>
 
     <div id="video-widget" class="video-widget">
@@ -1185,9 +1208,9 @@
 
     <canvas id="cosmic-bg"></canvas>
 
-    <div class="ramadan-decor">
-        <svg class="crescent" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 3c.132 0 .263 0 .393.007a9 9 0 0 0 0 17.986c-.13.007-.261.007-.393.007a9 9 0 0 1 0-18z"/>
+    <div class="festive-decor">
+        <svg class="festive-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
     </div>
 
@@ -1227,13 +1250,13 @@
                     </svg>
                     <div id="tasks-notif" class="icon-notif">خطة المذاكرة جاهزة! 📚</div>
                 </div>
-                <a id="download-nav-btn" href="https://vida-prod-webdev-app.s3.us-east-1.amazonaws.com/android-builds/109428570/dc7a33f8-6f6f-42a4-a139-06f6048f5414/boss-files-app-v1_0_0.apk?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAZV3A2ECZO4N7RSPW%2F20260224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260224T152438Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=504e4d601ba31fe21e856cf88225440a5845e600b0ce69c85fb0f32043c0f49b" target="_blank" class="app-download-link" title="تحميل التطبيق">
+                <a id="download-nav-btn" href="javascript:void(0)" onclick="app.showAppStatus()" class="app-download-link" title="حالة التطبيق">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <div id="download-notif" class="icon-notif download">تطبيق الأندرويد متاح! 📱</div>
+                    <div id="download-notif" class="icon-notif download">تنبيه: تحديثات التطبيق ⚠️</div>
                 </a>
             </div>
             <div class="search-container">
@@ -1245,7 +1268,7 @@
         </div>
     </nav>
 
-    <main id="app-root" class="container"></main>
+    <main id="app-root" class="container page-transition active"></main>
 
     <div id="notif-toast" class="notification-toast">
         <div class="notif-icon">
@@ -1330,6 +1353,7 @@
 
             async startIntro() {
                 const video = document.getElementById('intro-video');
+                const skipBtn = document.getElementById('intro-skip');
                 if (video) {
                     const videoUrl = 'intro.mp4';
                     try {
@@ -1366,6 +1390,11 @@
                                     window.addEventListener('touchstart', unmute);
                                 });
                             }
+
+                            // Show skip button after 3 seconds
+                            setTimeout(() => {
+                                if (skipBtn) skipBtn.classList.add('visible');
+                            }, 3000);
                         } else {
                             console.warn("intro.mp4 not found or invalid type, skipping intro.");
                             this.hideIntro();
@@ -1377,8 +1406,9 @@
                         return;
                     }
                     
-                    // Force hide after exactly 10 seconds as requested
-                    setTimeout(() => this.hideIntro(), 10000);
+                    // Force hide after exactly 10 seconds as requested (or longer if video is longer)
+                    // But user asked for it to be like an ad, so let's keep a safety timeout
+                    setTimeout(() => this.hideIntro(), 15000);
                 }
             },
 
@@ -1627,35 +1657,41 @@
             },
 
             navigate(view, subId = null, cat = null) {
-                // Save current state to history before navigating
-                if (this.view !== view || (subId && this.selectedSubject?.id !== subId) || (cat && this.selectedCategory !== cat)) {
-                    this.history.push({ view: this.view, subId: this.selectedSubject?.id, cat: this.selectedCategory });
+                const root = document.getElementById('app-root');
+                if (root) {
+                    root.classList.remove('active');
                 }
 
-                this.view = view;
-                this.selectedSubject = subId ? SUBJECT_DATA.find(s => s.id === subId) : null;
-                this.selectedCategory = cat;
-                
-                // Update back button visibility
-                const backBtn = document.getElementById('back-btn');
-                if (backBtn) {
-                    if (this.history.length > 0) backBtn.classList.add('active');
-                    else backBtn.classList.remove('active');
-                }
-
-                // CRITICAL: Scroll to top on every navigation
-                window.scrollTo(0, 0);
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
-                
-                this.render();
-                
-                // Re-apply scroll to top after render just in case
                 setTimeout(() => {
-                    window.scrollTo({top: 0, behavior: 'auto'});
-                }, 10);
+                    // Save current state to history before navigating
+                    if (this.view !== view || (subId && this.selectedSubject?.id !== subId) || (cat && this.selectedCategory !== cat)) {
+                        this.history.push({ view: this.view, subId: this.selectedSubject?.id, cat: this.selectedCategory });
+                    }
 
-                setTimeout(() => this.updateTheme(this.selectedSubject?.color, this.selectedSubject?.colorRGB), 50);
+                    this.view = view;
+                    this.selectedSubject = subId ? SUBJECT_DATA.find(s => s.id === subId) : null;
+                    this.selectedCategory = cat;
+                    
+                    // Update back button visibility
+                    const backBtn = document.getElementById('back-btn');
+                    if (backBtn) {
+                        if (this.history.length > 0) backBtn.classList.add('active');
+                        else backBtn.classList.remove('active');
+                    }
+
+                    // CRITICAL: Scroll to top on every navigation
+                    window.scrollTo(0, 0);
+                    document.documentElement.scrollTop = 0;
+                    document.body.scrollTop = 0;
+                    
+                    this.render();
+                    
+                    if (root) {
+                        requestAnimationFrame(() => {
+                            root.classList.add('active');
+                        });
+                    }
+                }, 300);
             },
 
             goBack() {
@@ -1692,9 +1728,12 @@
             renderHome() {
                 const updateInfo = this.getWeeklyUpdate();
                 const userName = localStorage.getItem('boss_user_name') || 'يا بطل';
+                const bannerText = updateInfo.isEid ? 'عيد سعيد' : 'BOSS Files';
+                const bannerClass = updateInfo.isEid ? 'eid-banner' : 'ramadan-kareem-banner';
+                
                 return `
                     <div class="hero">
-                        <div class="ramadan-kareem-banner">رمضان كريم</div>
+                        <div class="${bannerClass}">${bannerText}</div>
                         <div class="logo-container">
                             <div class="logo-boss">BOSS</div>
                             <div class="logo-files">Files</div>
@@ -1706,40 +1745,6 @@
                             منور يا ${userName}! جاهز تذاكر إيه النهاردة؟
                         </div>
                     </div>
-
-                    ${updateInfo.isCelebration ? `
-                        <div class="update-banner celebration-banner">
-                            <div class="update-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9a6 6 0 1 0 12 0"></path><path d="M12 15v6"></path><path d="M9 21h6"></path></svg>
-                            </div>
-                            <div class="update-content">
-                                <div class="update-title">تم اكتمال المنهج بنجاح يا ${userName}! 🎉</div>
-                                <div class="update-desc">تم رفع جميع المحاضرات (1-12) لكل المواد. بالتوفيق في الامتحانات!</div>
-                            </div>
-                        </div>
-                    ` : `
-                        <div class="update-banner">
-                            <div class="update-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
-                            </div>
-                            <div class="update-content">
-                                <div class="update-title">آخر التحديثات يا ${userName} 🚀</div>
-                                <div class="update-desc">شوف المحاضرات الجديدة اللي نزلت الأسبوع ده:</div>
-                                <div class="weekly-links">
-                                    ${SUBJECT_DATA.map(s => {
-                                        const isDelayed = s.id === 'psych' || s.id === 'oral-path';
-                                        const subjectWeek = isDelayed ? Math.max(3, updateInfo.weekNum - 1) : Math.max(3, updateInfo.weekNum);
-                                        if (subjectWeek < 1) return ''; // Don't show if week is less than 1
-                                        return `
-                                            <div class="weekly-link" onclick="app.goToWeeklyFile('${s.id}', ${subjectWeek})">
-                                                Lec ${subjectWeek} — ${s.name}
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    `}
 
                     <div class="grid">
                         <div class="card" onclick="app.navigate('tasks')" style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.05);">
@@ -1771,11 +1776,19 @@
                 
                 // Ensure we don't go below 1
                 if (weekNum < 1) weekNum = 1;
+
+                // Eid check: March 21-22, 2026
+                const isEid = now.getMonth() === 2 && (now.getDate() === 21 || now.getDate() === 22);
                 
                 return {
                     weekNum: weekNum,
-                    isCelebration: weekNum > 14
+                    isCelebration: weekNum > 14,
+                    isEid: isEid
                 };
+            },
+
+            showAppStatus() {
+                this.showToast('يتم تحديث التطبيق ووجود بعض التعديلات.. انتظرونا قريباً! 🛠️');
             },
 
             renderTasks() {
@@ -1958,20 +1971,23 @@
             },
 
             generateIslamicDecor() {
+                const updateInfo = this.getWeeklyUpdate();
                 let decor = '';
-                const items = [
+                const items = updateInfo.isEid ? [
+                    '<circle cx="12" cy="12" r="10"/>' // Circle (Balloon-like)
+                ] : [
                     '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>', // Star
                     '<path d="M12 3a9 9 0 1 0 9 9 9.75 9.75 0 0 1-9-9z"/>' // Crescent
                 ];
-                const colors = ['#ffd700', '#ffffff'];
-                for(let i = 0; i < 8; i++) {
-                    const angle = (i / 8) * Math.PI * 2;
-                    const x = 50 + Math.cos(angle) * 55;
-                    const y = 50 + Math.sin(angle) * 55;
+                const colors = ['#ffd700', '#ffffff', '#ff8c00'];
+                for(let i = 0; i < 10; i++) {
+                    const angle = (i / 10) * Math.PI * 2;
+                    const x = 50 + Math.cos(angle) * 60;
+                    const y = 50 + Math.sin(angle) * 60;
                     const color = colors[i % colors.length];
                     const icon = items[i % items.length];
                     decor += `
-                        <div class="islamic-item" style="left: ${x}%; top: ${y}%; color: ${color};">
+                        <div class="islamic-item" style="left: ${x}%; top: ${y}%; color: ${color}; animation-delay: ${i * 0.2}s;">
                             <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">${icon}</svg>
                         </div>
                     `;
