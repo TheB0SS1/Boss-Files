@@ -1,6 +1,41 @@
 
 import React, { useEffect, useRef } from 'react';
 
+class Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedX: number;
+  speedY: number;
+  opacity: number;
+
+  constructor(width: number, height: number) {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = Math.random() * 0.2 - 0.1;
+    this.speedY = Math.random() * 0.2 - 0.1;
+    this.opacity = Math.random() * 0.5 + 0.1;
+  }
+
+  update(width: number, height: number) {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    if (this.x > width) this.x = 0;
+    else if (this.x < 0) this.x = width;
+    if (this.y > height) this.y = 0;
+    else if (this.y < 0) this.y = height;
+  }
+
+  draw(context: CanvasRenderingContext2D) {
+    context.fillStyle = `rgba(148, 163, 184, ${this.opacity})`;
+    context.beginPath();
+    context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    context.fill();
+  }
+}
+
 const CosmicBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -13,41 +48,6 @@ const CosmicBackground: React.FC = () => {
     let animationFrameId: number;
     let particles: Particle[] = [];
     const particleCount = 60;
-
-    class Particle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      opacity: number;
-
-      constructor(width: number, height: number) {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = Math.random() * 0.2 - 0.1;
-        this.speedY = Math.random() * 0.2 - 0.1;
-        this.opacity = Math.random() * 0.5 + 0.1;
-      }
-
-      update(width: number, height: number) {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.x > width) this.x = 0;
-        else if (this.x < 0) this.x = width;
-        if (this.y > height) this.y = 0;
-        else if (this.y < 0) this.y = height;
-      }
-
-      draw(context: CanvasRenderingContext2D) {
-        context.fillStyle = `rgba(148, 163, 184, ${this.opacity})`;
-        context.beginPath();
-        context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        context.fill();
-      }
-    }
 
     const init = () => {
       canvas.width = window.innerWidth;

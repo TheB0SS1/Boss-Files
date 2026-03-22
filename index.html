@@ -11,15 +11,16 @@
             --bg-deep-rgb: 2, 6, 23;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --subject-accent: #3b82f6;
-            --subject-accent-low: rgba(59, 130, 246, 0.1);
-            --subject-accent-rgb: 59, 130, 246;
+            --subject-accent: #0ea5e9; /* More cyan/AI blue */
+            --subject-accent-low: rgba(14, 165, 233, 0.1);
+            --subject-accent-rgb: 14, 165, 233;
             --slate-100: #f8fafc;
             --slate-300: #cbd5e1;
             --slate-400: #94a3b8;
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
         }
 
         .light-mode {
@@ -50,7 +51,6 @@
             content: '';
             position: fixed;
             inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5.878 18.09h19.022l-15.389 11.18 5.878 18.09-15.389-11.18-15.389 11.18 5.878-18.09-15.389-11.18h19.022z' fill='%23ffd700' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
             pointer-events: none;
             z-index: -1;
         }
@@ -696,26 +696,7 @@
             color: var(--slate-400);
         }
 
-        /* Festive Decor - Eid */
-        .festive-decor {
-            position: fixed;
-            top: 5.5rem;
-            right: 1rem;
-            z-index: 500;
-            pointer-events: none;
-            opacity: 0.8;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-            animation: float-festive 6s ease-in-out infinite;
-        }
-        @keyframes float-festive {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(5deg); }
-        }
-        .festive-icon {
-            color: #ffd700;
-            width: 3rem;
-            height: 3rem;
-        }
+
 
         .eid-banner {
             font-family: 'Aref Ruqaa', serif;
@@ -861,16 +842,371 @@
             text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
         }
 
-        .logo-files {
-            font-size: clamp(1rem, 4vw, 2.5rem);
-            font-weight: 300;
-            letter-spacing: 0.8em;
-            text-transform: none;
-            color: var(--slate-400);
-            margin-top: 0.5rem;
-            opacity: 0.9;
+        /* System Boot Sequence */
+        .boot-sequence {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            color: var(--subject-accent);
+            padding: 2rem;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+        .boot-log {
+            max-width: 600px;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            font-size: 0.7rem;
+            line-height: 1.4;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        .boot-progress {
+            width: 200px;
+            height: 2px;
+            background: rgba(var(--subject-accent-rgb), 0.1);
             position: relative;
-            padding-left: 0.8em; /* Offset for letter spacing */
+            overflow: hidden;
+        }
+        .boot-progress-bar {
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            background: var(--subject-accent);
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--subject-accent);
+        }
+
+        .data-particle {
+            position: fixed;
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            color: var(--subject-accent);
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+            animation: particle-float linear infinite;
+        }
+        @keyframes particle-float {
+            from { transform: translateY(100vh) rotate(0deg); }
+            to { transform: translateY(-10vh) rotate(360deg); }
+        }
+        .hud-tl { top: 6rem; left: 1rem; border-right: none; border-bottom: none; }
+        .hud-tr { top: 6rem; right: 1rem; border-left: none; border-bottom: none; }
+        .hud-bl { bottom: 1rem; left: 1rem; border-right: none; border-top: none; }
+        .hud-br { bottom: 1rem; right: 1rem; border-left: none; border-top: none; }
+
+        .hud-data-stream {
+            position: fixed;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--subject-accent);
+            opacity: 0.2;
+            writing-mode: vertical-rl;
+            letter-spacing: 0.3em;
+            pointer-events: none;
+            z-index: 900;
+        }
+
+        .glitch-text {
+            position: relative;
+            animation: glitch 5s infinite;
+        }
+        @keyframes glitch {
+            0%, 90%, 100% { transform: none; opacity: 1; }
+            92% { transform: skewX(20deg); opacity: 0.8; }
+            94% { transform: skewX(-20deg); opacity: 0.8; }
+            96% { transform: translate(5px, -5px); opacity: 0.9; }
+        }
+
+        /* System Status Bar */
+        .system-status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: rgba(var(--bg-deep-rgb), 0.9);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--subject-accent);
+            z-index: 1001;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .status-item { display: flex; align-items: center; gap: 6px; }
+        .status-item span { opacity: 0.5; }
+
+        /* Eid Banner - Authentic Arabic Style */
+        .eid-banner {
+            font-family: 'Aref Ruqaa', serif;
+            font-size: clamp(3rem, 12vw, 6rem);
+            font-weight: 400;
+            background: linear-gradient(to bottom, #fff9c4, #ffd700, #ffaa00, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            margin-top: 3.5rem; /* Increased margin significantly */
+            margin-bottom: 1.5rem;
+            line-height: 1.4; /* Increased line-height to ensure dots are clear */
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.2));
+            animation: eid-glow 4s ease-in-out infinite;
+            direction: rtl;
+            position: relative;
+            z-index: 50;
+        }
+        @keyframes eid-glow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.2)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            background: var(--subject-accent-low);
+            border: 1px solid var(--subject-accent);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--subject-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 15px var(--subject-accent-low);
+        }
+
+        /* WhatsApp Floating Button */
+        .wa-float {
+            position: fixed;
+            bottom: 40px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .wa-btn {
+            width: 50px;
+            height: 50px;
+            background: #25d366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: none;
+            outline: none;
+        }
+        .wa-btn:hover { transform: scale(1.1); }
+        .wa-notif {
+            background: white;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            animation: wa-bounce 2s infinite;
+            display: none;
+            max-width: 200px;
+            text-align: right;
+            direction: rtl;
+        }
+        .wa-notif::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 20px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        @keyframes wa-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .wa-menu {
+            background: var(--bg-deep);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            width: 250px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(20px);
+            direction: rtl;
+        }
+        .wa-option {
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: var(--text-main);
+            text-align: right;
+        }
+        .wa-option:hover { background: var(--subject-accent-low); color: var(--subject-accent); }
+        .wa-input-area {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .wa-input {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 8px;
+            color: white;
+            font-size: 0.8rem;
+            outline: none;
+        }
+        .wa-send {
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Visitor Stats in Nav */
+        .visitor-stats-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .visitor-stats-item {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--subject-accent);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+            background: rgba(var(--bg-deep-rgb), 0.4);
+            padding: 2px 10px;
+            border-radius: 100px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(5px);
+        }
+        
+        @media (max-width: 768px) {
+            .visitor-stats-item { font-size: 0.55rem; padding: 2px 8px; }
+            .visitor-stats-item b { font-size: 0.65rem; }
+        }
+
+        .visitor-dot {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .ai-scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--subject-accent), transparent);
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.2;
+            animation: ai-scan 10s linear infinite;
+        }
+        @keyframes ai-scan {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .ai-status-dot {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            box-shadow: 0 0 12px #10b981;
+            animation: ai-pulse 2s infinite;
+        }
+        @keyframes ai-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .tech-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--subject-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            opacity: 0.6;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tech-label::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--subject-accent);
+            border-radius: 50%;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid transparent;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--subject-accent), transparent, var(--subject-accent)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .card:hover::after { opacity: 0.4; }
+
+        .logo-files {
+            font-family: var(--font-mono);
+            font-size: clamp(0.7rem, 2.5vw, 1.5rem);
+            font-weight: 400;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: var(--subject-accent);
+            margin-top: 1.25rem;
+            opacity: 0.7;
+            position: relative;
         }
 
         .logo-files::before, .logo-files::after {
@@ -1128,40 +1464,91 @@
             visibility: hidden;
             pointer-events: none;
         }
-        .intro-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+        .ai-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.5rem;
+            animation: ai-fade-in 0.8s ease-out;
         }
-        .intro-skip {
+        .ai-circle-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ai-circle {
             position: absolute;
-            top: 2rem;
-            right: 2rem;
-            color: rgba(255,255,255,0.8);
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 0.6rem 1.5rem;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 100px;
-            transition: all 0.3s;
-            display: none;
-            z-index: 10001;
+            inset: 0;
+            border: 2px solid rgba(var(--subject-accent-rgb), 0.1);
+            border-radius: 50%;
         }
-        .intro-skip.visible {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .ai-circle-inner {
+            position: absolute;
+            inset: 15px;
+            border: 3px solid transparent;
+            border-top-color: var(--subject-accent);
+            border-radius: 50%;
+            animation: ai-rotate 1.5s cubic-bezier(0.53, 0.21, 0.29, 0.67) infinite;
+            filter: drop-shadow(0 0 10px var(--subject-accent));
+        }
+        .ai-circle-outer {
+            position: absolute;
+            inset: -5px;
+            border: 1px solid transparent;
+            border-bottom-color: var(--subject-accent);
+            border-radius: 50%;
+            animation: ai-rotate 3s linear infinite reverse;
+            opacity: 0.5;
+        }
+        .ai-core {
+            width: 40px;
+            height: 40px;
+            background: var(--subject-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--subject-accent), 0 0 60px rgba(var(--subject-accent-rgb), 0.4);
+            animation: ai-pulse 2s ease-in-out infinite;
+        }
+        .ai-text-container {
+            text-align: center;
+        }
+        .ai-text {
+            font-family: var(--font-mono);
+            color: var(--subject-accent);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            animation: ai-blink 1.5s infinite;
+        }
+        .ai-status {
+            font-size: 0.6rem;
+            color: var(--slate-400);
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+        @keyframes ai-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes ai-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        @keyframes ai-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        @keyframes ai-fade-in {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        .intro-skip:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-            border-color: #fff;
         }
 
         .action-btn.cancel:hover {
@@ -1183,9 +1570,70 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
+    <div class="visitor-counter">
+        <div class="visitor-dot"></div>
+        <span>VISITORS_TODAY: <b id="visitor-count">0</b></span>
+    </div>
+
+    <div class="wa-float">
+        <div id="wa-notif" class="wa-notif">لو في أي مشكلة معاك تواصل مع صاحب الموقع</div>
+        <div id="wa-menu" class="wa-menu">
+            <div class="wa-option" onclick="app.handleWAOption('site_error')">هل الموقع فيه أخطاء؟</div>
+            <div class="wa-option" onclick="app.handleWAOption('file_error')">هل الملفات فيها أخطاء؟</div>
+            <div class="wa-option" onclick="app.handleWAOption('questions')">عندك أسئلة بخصوص الملفات؟</div>
+            <div class="wa-option" onclick="app.handleWAOption('custom')">اكتب سؤالك الخاص</div>
+            <div id="wa-input-area" class="wa-input-area">
+                <textarea id="wa-custom-input" class="wa-input" placeholder="اكتب سؤالك هنا..." rows="3"></textarea>
+                <button class="wa-send" onclick="app.sendWAMessage()">إرسال عبر واتساب</button>
+            </div>
+        </div>
+        <button class="wa-btn" onclick="app.toggleWAMenu()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </button>
+    </div>
+
+    <div id="boot-sequence" class="boot-sequence">
+        <div class="boot-log" id="boot-log"></div>
+        <div class="boot-progress">
+            <div class="boot-progress-bar" id="boot-progress-bar"></div>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.6rem; letter-spacing: 0.2em; opacity: 0.5;">INITIALIZING AI CORE...</div>
+    </div>
+
+    <div class="system-status-bar">
+        <div class="status-item">
+            <span>STATUS:</span> <b id="sys-status">OPTIMAL</b>
+        </div>
+        <div class="status-item">
+            <span>NEURAL_LINK:</span> <b>ACTIVE</b>
+        </div>
+        <div class="status-item">
+            <span>LATENCY:</span> <b id="sys-latency">12ms</b>
+        </div>
+        <div class="status-item" style="margin-left: auto;">
+            <span>ENCRYPTION:</span> <b>AES-256</b>
+        </div>
+    </div>
+
+    <div class="ai-scan-line"></div>
+    <div class="hud-corner hud-tl"></div>
+    <div class="hud-corner hud-tr"></div>
+    <div class="hud-corner hud-bl"></div>
+    <div class="hud-corner hud-br"></div>
+    <div class="hud-data-stream">SYSTEM_LOG_v2.0.3_ANALYZING_DATA_PACKETS_...</div>
     <div id="intro-overlay" class="intro-overlay">
-        <video id="intro-video" class="intro-video" playsinline preload="auto" onerror="app.hideIntro()"></video>
-        <div id="intro-skip" class="intro-skip" onclick="app.hideIntro()">تخطي</div>
+        <div class="ai-loader">
+            <div class="ai-circle-container">
+                <div class="ai-circle"></div>
+                <div class="ai-circle-inner"></div>
+                <div class="ai-circle-outer"></div>
+                <div class="ai-core"></div>
+            </div>
+            <div class="ai-text-container">
+                <div class="ai-text">INITIALIZING AI CORE</div>
+                <div class="ai-status">SYNCING WITH REPOSITORY v4.0...</div>
+            </div>
+        </div>
     </div>
 
     <div id="video-widget" class="video-widget">
@@ -1208,11 +1656,7 @@
 
     <canvas id="cosmic-bg"></canvas>
 
-    <div class="festive-decor">
-        <svg class="festive-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-    </div>
+
 
     <div id="name-modal" class="name-modal">
         <div class="name-card">
@@ -1224,7 +1668,16 @@
     </div>
 
     <nav>
-        <div class="container nav-content">
+        <div class="container nav-content" style="flex-direction: column; padding: 0.5rem 0;">
+            <div class="visitor-stats-container">
+                <div class="visitor-stats-item">
+                    <div class="visitor-dot"></div>
+                    LIVE: <b id="visitor-count-live">0</b>
+                </div>
+                <div class="visitor-stats-item">
+                    TODAY: <b id="visitor-count-today">0</b>
+                </div>
+            </div>
             <div class="nav-controls">
                 <div id="back-btn" class="back-btn" onclick="app.goBack()" title="Go Back">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1351,72 +1804,137 @@
             history: [],
             videoFullscreenTimer: null,
 
-            async startIntro() {
-                const video = document.getElementById('intro-video');
-                const skipBtn = document.getElementById('intro-skip');
-                if (video) {
-                    const videoUrl = 'intro.mp4';
-                    try {
-                        video.onended = () => this.hideIntro();
-                        video.onerror = () => {
-                            console.warn("Intro video error, skipping.");
-                            this.hideIntro();
-                        };
-
-                        const response = await fetch(videoUrl, { method: 'HEAD' });
-                        const contentType = response.headers.get('content-type');
-                        if (response.ok && contentType && contentType.startsWith('video/')) {
-                            video.src = videoUrl;
-                            video.muted = false;
-                            video.volume = 1.0;
-                            
-                            // Attempt to play with sound immediately
-                            const playPromise = video.play();
-                            
-                            if (playPromise !== undefined) {
-                                playPromise.catch(error => {
-                                    console.warn("Autoplay with sound was blocked by browser. Playing muted as fallback.");
-                                    video.muted = true;
-                                    video.play();
-                                    
-                                    // Unmute on first user interaction with the page
-                                    const unmute = () => {
-                                        video.muted = false;
-                                        video.volume = 1.0;
-                                        window.removeEventListener('click', unmute);
-                                        window.removeEventListener('touchstart', unmute);
-                                    };
-                                    window.addEventListener('click', unmute);
-                                    window.addEventListener('touchstart', unmute);
-                                });
-                            }
-
-                            // Show skip button after 3 seconds
-                            setTimeout(() => {
-                                if (skipBtn) skipBtn.classList.add('visible');
-                            }, 3000);
-                        } else {
-                            console.warn("intro.mp4 not found or invalid type, skipping intro.");
-                            this.hideIntro();
-                            return;
-                        }
-                    } catch (e) {
-                        console.warn("Error checking intro video:", e);
-                        this.hideIntro();
-                        return;
+            startIntro() {
+                this.updateVisitorCount();
+                const boot = document.getElementById('boot-sequence');
+                const log = document.getElementById('boot-log');
+                const bar = document.getElementById('boot-progress-bar');
+                const messages = [
+                    "> INITIALIZING SYSTEM CORE...",
+                    "> LOADING NEURAL NETWORK ADAPTERS...",
+                    "> CONNECTING TO ACADEMIC DATABASE...",
+                    "> ANALYZING USER PATTERNS...",
+                    "> OPTIMIZING DATA STREAMS...",
+                    "> BYPASSING FIREWALLS...",
+                    "> SYSTEM READY."
+                ];
+                
+                let i = 0;
+                const addLog = () => {
+                    if(i < messages.length) {
+                        const line = document.createElement('div');
+                        line.innerText = messages[i];
+                        log.appendChild(line);
+                        i++;
+                        bar.style.width = `${(i / messages.length) * 100}%`;
+                        setTimeout(addLog, Math.random() * 400 + 200);
+                    } else {
+                        setTimeout(() => {
+                            boot.style.opacity = '0';
+                            boot.style.visibility = 'hidden';
+                            this.showWANotif();
+                        }, 500);
                     }
-                    
-                    // Force hide after exactly 10 seconds as requested (or longer if video is longer)
-                    // But user asked for it to be like an ad, so let's keep a safety timeout
-                    setTimeout(() => this.hideIntro(), 15000);
+                };
+                addLog();
+
+                // Generate data particles
+                for(let p=0; p<20; p++) {
+                    const part = document.createElement('div');
+                    part.className = 'data-particle';
+                    part.innerText = Math.random() > 0.5 ? '1' : '0';
+                    part.style.left = `${Math.random() * 100}%`;
+                    part.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                    part.style.animationDelay = `${Math.random() * 5}s`;
+                    document.body.appendChild(part);
+                }
+
+                // Show AI loader for 2.5 seconds as requested
+                setTimeout(() => {
+                    this.hideIntro();
+                }, 2500);
+            },
+
+            updateVisitorCount() {
+                const now = new Date();
+                const day = now.getDay(); // 0-6
+                const hour = now.getHours();
+                
+                // Today's total simulation
+                let baseToday = 5;
+                if (hour >= 10 && hour <= 22) baseToday += 15;
+                if (day === 3 || day === 4) baseToday += 20; // Wed/Thu
+                const randomNoiseToday = Math.floor(Math.random() * 7) - 3;
+                let countToday = baseToday + randomNoiseToday;
+                if (countToday < 1) countToday = 1;
+                if (countToday > 50) countToday = 50;
+
+                // Live users simulation (0-5)
+                let countLive = Math.floor(Math.random() * 6); // 0 to 5
+                
+                const elToday = document.getElementById('visitor-count-today');
+                const elLive = document.getElementById('visitor-count-live');
+                if (elToday) elToday.innerText = countToday;
+                if (elLive) elLive.innerText = countLive;
+
+                // Refresh every 5 minutes for "live" feel
+                setTimeout(() => this.updateVisitorCount(), 300000);
+            },
+
+            showWANotif() {
+                const notif = document.getElementById('wa-notif');
+                if (notif) {
+                    notif.style.display = 'block';
+                    setTimeout(() => {
+                        notif.style.display = 'none';
+                    }, 5000);
                 }
             },
 
-            unmuteIntro() {
-                const video = document.getElementById('intro-video');
-                if (video) {
-                    video.muted = false;
+            toggleWAMenu() {
+                const menu = document.getElementById('wa-menu');
+                if (menu) {
+                    const isVisible = menu.style.display === 'flex';
+                    menu.style.display = isVisible ? 'none' : 'flex';
+                    document.getElementById('wa-notif').style.display = 'none';
                 }
+            },
+
+            handleWAOption(option) {
+                let message = "";
+                const inputArea = document.getElementById('wa-input-area');
+                inputArea.style.display = 'none';
+
+                if (option === 'site_error') {
+                    message = "مرحباً، أواجه مشكلة تقنية في الموقع. يرجى المساعدة.";
+                    this.openWA(message);
+                } else if (option === 'file_error') {
+                    message = "مرحباً، هناك خطأ في أحد الملفات الدراسية.";
+                    this.openWA(message);
+                } else if (option === 'questions') {
+                    message = "مرحباً، لدي استفسار بخصوص الملفات المتاحة.";
+                    this.openWA(message);
+                } else if (option === 'custom') {
+                    inputArea.style.display = 'flex';
+                }
+            },
+
+            sendWAMessage() {
+                const input = document.getElementById('wa-custom-input');
+                if (input.value.trim()) {
+                    this.openWA(input.value.trim());
+                }
+            },
+
+            openWA(text) {
+                const phone = "201012274983";
+                const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+                window.open(url, '_blank');
+                this.toggleWAMenu();
+            },
+
+            unmuteIntro() {
+                // No longer needed
             },
 
             hideIntro() {
@@ -1728,32 +2246,39 @@
             renderHome() {
                 const updateInfo = this.getWeeklyUpdate();
                 const userName = localStorage.getItem('boss_user_name') || 'يا بطل';
-                const bannerText = updateInfo.isEid ? 'عيد سعيد' : 'BOSS Files';
+                const bannerText = updateInfo.isEid ? 'عيد سعيد' : 'AI ENHANCED SYSTEM';
                 const bannerClass = updateInfo.isEid ? 'eid-banner' : 'ramadan-kareem-banner';
                 
                 return `
                     <div class="hero">
-                        <div class="${bannerClass}">${bannerText}</div>
+                        <div class="ai-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                            AI POWERED
+                        </div>
                         <div class="logo-container">
-                            <div class="logo-boss">BOSS</div>
+                            <div class="logo-boss glitch-text">BOSS</div>
                             <div class="logo-files">Files</div>
                             <div class="lights-container">
                                 ${this.generateIslamicDecor()}
                             </div>
                         </div>
+                        <div class="${bannerClass}">${bannerText}</div>
                         <div class="hero-greeting">
-                            منور يا ${userName}! جاهز تذاكر إيه النهاردة؟
+                            منور يا ${userName}! النظام جاهز لتحليل بياناتك..
+                            <span class="ai-status-dot"></span>
                         </div>
                     </div>
 
                     <div class="grid">
-                        <div class="card" onclick="app.navigate('tasks')" style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.05);">
-                            <h3 style="color: #3b82f6;">Study Tasks</h3>
+                        <div class="card" onclick="app.navigate('tasks')" style="border-color: var(--subject-accent); background: rgba(var(--subject-accent-rgb), 0.05);">
+                            <div class="tech-label">CORE_MODULE_01</div>
+                            <h3 style="color: var(--subject-accent);">Study Tasks</h3>
                             <span>WEEKLY PROGRESS</span>
-                            <div class="energy-aura" style="--aura-color: #3b82f6;"></div>
+                            <div class="energy-aura" style="--aura-color: var(--subject-accent);"></div>
                         </div>
-                        ${SUBJECT_DATA.map(s => `
+                        ${SUBJECT_DATA.map((s, i) => `
                             <div class="card" onclick="app.navigate('subject', '${s.id}')">
+                                <div class="tech-label">DATA_STREAM_0${i+2}</div>
                                 <h3>${s.name}</h3>
                                 <span>${s.files.length} ASSETS</span>
                                 <div class="energy-aura" style="--aura-color: ${s.color};"></div>
@@ -2084,12 +2609,66 @@
             },
 
             initCanvas() {
-                const c = document.getElementById('cosmic-bg'), ctx = c.getContext('2d');
-                window.starColor = `rgba(255, 255, 255, `;
-                let w = c.width = window.innerWidth, h = c.height = window.innerHeight, stars = [];
-                const init = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; stars = Array.from({length:80}, () => ({x:Math.random()*w, y:Math.random()*h, r:Math.random()*1.5, o:Math.random(), s:Math.random()*0.005})); };
-                const draw = () => { ctx.clearRect(0,0,w,h); stars.forEach(s => { s.o += s.s; if(s.o > 1 || s.o < 0) s.s *= -1; ctx.fillStyle=`${window.starColor}${s.o*0.25})`; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(draw); };
-                window.onresize = init; init(); draw();
+                const c = document.getElementById('cosmic-bg');
+                const ctx = c.getContext('2d');
+                let w = c.width = window.innerWidth, h = c.height = window.innerHeight, nodes = [];
+                
+                const init = () => { 
+                    w = c.width = window.innerWidth; 
+                    h = c.height = window.innerHeight; 
+                    nodes = Array.from({length: 60}, () => ({
+                        x: Math.random() * w, 
+                        y: Math.random() * h, 
+                        vx: (Math.random() - 0.5) * 0.5, 
+                        vy: (Math.random() - 0.5) * 0.5,
+                        r: Math.random() * 2 + 1
+                    })); 
+                };
+                
+                const draw = () => { 
+                    ctx.clearRect(0,0,w,h); 
+                    const isLight = document.documentElement.classList.contains('light-mode');
+                    const color = isLight ? 'rgba(15, 23, 42, ' : 'rgba(14, 165, 233, ';
+                    
+                    nodes.forEach((n, i) => {
+                        n.x += n.vx;
+                        n.y += n.vy;
+                        
+                        if(n.x < 0 || n.x > w) n.vx *= -1;
+                        if(n.y < 0 || n.y > h) n.vy *= -1;
+                        
+                        ctx.fillStyle = `${color}0.3)`;
+                        ctx.beginPath();
+                        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Connect nodes
+                        for(let j = i + 1; j < nodes.length; j++) {
+                            const n2 = nodes[j];
+                            const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+                            if(dist < 150) {
+                                ctx.strokeStyle = `${color}${0.15 * (1 - dist/150)})`;
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(n.x, n.y);
+                                ctx.lineTo(n2.x, n2.y);
+                                ctx.stroke();
+                            }
+                        }
+                    });
+                    requestAnimationFrame(draw); 
+                };
+                
+                window.addEventListener('resize', init);
+                init();
+                draw();
+
+                // Update system status
+                setInterval(() => {
+                    const latency = Math.floor(Math.random() * 15) + 5;
+                    const latencyEl = document.getElementById('sys-latency');
+                    if(latencyEl) latencyEl.innerText = `${latency}ms`;
+                }, 3000);
             },
             
             handleSearch(v) {
